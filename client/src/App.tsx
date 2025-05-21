@@ -4,7 +4,7 @@ import Layout from "./layout";
 
 const App: React.FC = () => {
   return (
-    <div>
+    <div className="w-full h-dvh">
       <Layout>
         <LandingPage />
       </Layout>

@@ -7,9 +7,9 @@ type LayoutNode = {
 
 const Layout: React.FC<LayoutNode> = ({ children }) => {
   return (
-    <div className="grid grid-cols-1 grid-rows-[max-content_1fr]">
+    <div className="w-full h-full grid grid-cols-1 grid-rows-[max-content_1fr]">
       <Header />
-      <div>{children}</div>
+      <div className="w-full h-full">{children}</div>
     </div>
   );
 };
