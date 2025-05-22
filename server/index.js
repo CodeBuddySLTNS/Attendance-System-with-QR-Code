@@ -3,6 +3,7 @@ import cors from "cors";
 
 import authenticate from "./middlewares/authenticate.js";
 import erroHandler from "./middlewares/error-handler.js";
+import students from "./routes/students.js";
 import departments from "./routes/departments.js";
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use((req, res, next) => (console.log(req.path, req.method), next()));
 
+app.use("/students", students);
 app.use("/departments", departments);
 
 app.use(erroHandler);

@@ -11,7 +11,7 @@ export const sqlTableQueries = `
         name VARCHAR(100) NOT NULL,
         departmentId INT,
         year TINYINT NOT NULL CHECK (year BETWEEN 1 AND 4),
-        role VARCHAR(10) NOT NULL,
+        role VARCHAR(10) NOT NULL DEFAULT "student",
         FOREIGN KEY (departmentId) REFERENCES departments(departmentId) ON DELETE CASCADE
     );
 
