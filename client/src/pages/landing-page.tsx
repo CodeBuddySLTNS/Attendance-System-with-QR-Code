@@ -2,19 +2,28 @@ import React, { useState } from "react";
 import { Card } from "../components/ui/card";
 import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
 import PresentStudentsTabe from "../components/present-students-table";
-
-interface PresentStudent {
-  type: string;
-  name: string;
-  courseAndYear: string;
-  date: Date;
-}
+import type { PresentStudent } from "../types/students.types";
 
 const LandingPage: React.FC = () => {
   const [presentStudents, setPresentStudents] = useState<PresentStudent[]>([]);
 
   const handleScanResult = async (result: IDetectedBarcode[]) => {
-    console.log(result[0].rawValue);
+    try {
+      const data = JSON.parse(result[0].rawValue);
+      if (!data?.name || !data?.courseAndYear)
+        throw new Error("Invalid Format!");
+
+      const presentValue: PresentStudent = {
+        type: "in",
+        name: data.name,
+        courseAndYear: data.courseAndYear,
+        date: new Date(),
+      };
+
+      setPresentStudents((prev) => [...prev, presentValue]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -35,7 +44,7 @@ const LandingPage: React.FC = () => {
           </div>
         </Card>
         <Card className="p-4 rounded-lg gap-1 overflow-hidden">
-          <PresentStudentsTabe />
+          <PresentStudentsTabe data={presentStudents} />
         </Card>
       </Card>
     </div>

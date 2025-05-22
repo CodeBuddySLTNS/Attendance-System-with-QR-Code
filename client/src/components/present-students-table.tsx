@@ -8,107 +8,11 @@ import {
   TableRow,
 } from "./ui/table";
 import { X } from "lucide-react";
+import type { PresentStudent } from "../types/students.types";
 
-interface PresentStudent {
-  name: string;
-  yearAndSection: string;
-  date: Date;
-}
-
-const data: PresentStudent[] = [
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-  {
-    name: "John Lloyd Cruz",
-    yearAndSection: "BSIT1",
-    date: new Date(),
-  },
-  {
-    name: "Juan Tamad",
-    yearAndSection: "BSCS 4",
-    date: new Date(),
-  },
-  {
-    name: "Juan Pedro",
-    yearAndSection: "BSSW 2",
-    date: new Date(),
-  },
-];
-
-const PresentStudentsTabe: React.FC = () => {
+const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
+  data,
+}) => {
   return (
     <div className="h-full grid grid-cols-1 grid-rows-[max-content_1fr]">
       <div className="text-xl Nunito-SemiBold">List of Present Students</div>
@@ -130,7 +34,7 @@ const PresentStudentsTabe: React.FC = () => {
                   <TableCell>{index + 1}.</TableCell>
                   <TableCell>{d.name}</TableCell>
                   <TableCell className="text-center">
-                    {d.yearAndSection}
+                    {d.courseAndYear}
                   </TableCell>
                   <TableCell className="text-center">
                     {new Date(d.date).toLocaleString("en-US", {
@@ -148,7 +52,11 @@ const PresentStudentsTabe: React.FC = () => {
                 </TableRow>
               ))
             ) : (
-              <TableRow></TableRow>
+              <TableRow>
+                <TableCell colSpan={5} className="p-8 Nunito text-center">
+                  No present students.
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>
