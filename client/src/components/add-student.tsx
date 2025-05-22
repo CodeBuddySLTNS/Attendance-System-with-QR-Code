@@ -10,23 +10,50 @@ import {
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { coleAPI } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface InputData {
   name: string;
+  departmentId: string;
   year: number;
 }
 
+interface Department {
+  departmentId: number;
+  departmentName: string;
+  acronym: string;
+}
+
 const AddStudent: React.FC = () => {
+  const { data: departments } = useQuery<Department[]>({
+    queryKey: ["departments"],
+    queryFn: coleAPI("/departments"),
+  });
+
   const {
     register,
     handleSubmit,
+    control,
+    watch,
+    reset,
     formState: { errors },
   } = useForm<InputData>();
 
   const onSubmit: SubmitHandler<InputData> = (data) => {
     console.log(data);
+    reset();
   };
+
+  const selectedDepartment = watch("departmentId");
 
   return (
     <div>
@@ -58,6 +85,41 @@ const AddStudent: React.FC = () => {
                 <p className="text-sm text-red-500">{errors.name.message}</p>
               )}
             </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label>Department</Label>
+              <Controller
+                control={control}
+                name="departmentId"
+                rules={{ required: "Department is required" }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={selectedDepartment ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments?.map((dep, index) => (
+                        <SelectItem
+                          key={index}
+                          value={dep.departmentId.toString()}
+                        >
+                          {dep.departmentName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />{" "}
+              {errors.departmentId && (
+                <p className="text-sm text-red-500">
+                  {errors.departmentId.message}
+                </p>
+              )}
+            </div>
+
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="year">Year Level</Label>
               <Input
@@ -65,6 +127,7 @@ const AddStudent: React.FC = () => {
                   required: "Year level is required",
                   min: 1,
                   max: 4,
+                  valueAsNumber: true,
                 })}
                 type="number"
                 min={1}
