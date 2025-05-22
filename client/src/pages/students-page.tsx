@@ -32,9 +32,9 @@ export default function StudentsPage() {
   const deleteStudent = () => {};
 
   return (
-    <div className="p-8 pt-4">
+    <div className="p-10 pt-8">
       <div className="flex justify-between">
-        <h1 className="text-2xl Nunito-SemiBold">List of Students</h1>
+        <h1 className="text-2xl font-semibold">List of Students</h1>
         <AddStudent />
       </div>
 

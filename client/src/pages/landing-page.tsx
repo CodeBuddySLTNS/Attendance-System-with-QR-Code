@@ -3,6 +3,7 @@ import { Card } from "../components/ui/card";
 import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
 import PresentStudentsTabe from "../components/present-students-table";
 import type { PresentStudent } from "../types/students.types";
+import BgImageLayer from "@/components/bg-image-layer";
 
 const LandingPage: React.FC = () => {
   const [presentStudents, setPresentStudents] = useState<PresentStudent[]>([]);
@@ -28,11 +29,11 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full p-8 flex justify-center items-center bg-[#E3D095] shadow-xl">
+    <div className="w-full h-full p-8 flex justify-center items-center bg-gray-400 shadow-xl">
       <Card className="w-full h-full p-4 grid grid-cols-[1fr_2fr] rounded-lg bg-gray-100">
         <Card className="p-4 rounded-lg ">
           <div className="flex flex-col gap-1.5">
-            <h2 className="Nunito-Extra-Bold text-xl text-center">
+            <h2 className="font-bold text-xl text-center">
               Scan your QR Code here for your attendance
             </h2>
             <Scanner
@@ -44,7 +45,8 @@ const LandingPage: React.FC = () => {
             />
           </div>
         </Card>
-        <Card className="p-4 rounded-lg gap-1 overflow-hidden">
+        <Card className="p-4 rounded-lg gap-1 overflow-hidden relative">
+          <BgImageLayer />
           <PresentStudentsTabe data={presentStudents} />
         </Card>
       </Card>

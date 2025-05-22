@@ -7,9 +7,12 @@ const Header: React.FC = () => {
   const page = useMainStore((state) => state.page);
 
   return (
-    <div className="w-full flex justify-between items-center px-4 py-2 bg-[#0E2148] shadow-2xl">
-      <div className="Nunito-Extra-Bold text-xl text-white">
-        QR Code Attendance System
+    <div className="w-full flex justify-between items-center px-4 py-2.5 bg-[#0E2148] shadow-2xl">
+      <div className="Nunito-Extra-Bold flex items-center gap-2 text-xl text-white">
+        <div className="w-8 h-8">
+          <img src="/images/paclogo.png" />
+        </div>
+        <span>QR Code Attendance System</span>
       </div>
 
       <div className="text-white Nunito-Medium flex gap-4">
