@@ -1,5 +1,6 @@
 export interface PresentStudent {
   type?: string;
+  userId: number;
   name: string;
   courseAndYear: string;
   date: Date;
