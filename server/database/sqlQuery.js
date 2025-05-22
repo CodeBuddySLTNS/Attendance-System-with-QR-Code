@@ -1,8 +1,8 @@
-const { default: status } = require("http-status");
-const { pool } = require("../database/sqlConnection");
-const { CustomError } = require("../lib/utils");
+import status from "http-status";
+import { pool } from "./sqlConnection.js";
+import { CustomError } from "../lib/utils.js";
 
-const sqlQuery = async (query, params) => {
+export const sqlQuery = async (query, params) => {
   let dbconn;
   try {
     dbconn = await pool.getConnection();
@@ -31,5 +31,3 @@ const sqlQuery = async (query, params) => {
     if (dbconn) dbconn.release();
   }
 };
-
-module.exports = sqlQuery;
