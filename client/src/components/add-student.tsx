@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { coleAPI } from "@/lib/utils";
 import {
   Select,
@@ -20,8 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { toast } from "sonner";
 
 interface InputData {
+  studentId?: number;
   name: string;
   departmentId: string;
   year: number;
@@ -34,9 +36,23 @@ interface Department {
 }
 
 const AddStudent: React.FC = () => {
+  const queryClient = useQueryClient();
+
   const { data: departments } = useQuery<Department[]>({
     queryKey: ["departments"],
     queryFn: coleAPI("/departments"),
+  });
+
+  const { mutateAsync: addStudent, isPending } = useMutation({
+    mutationFn: coleAPI("/students/add", "POST"),
+    onError: () => {
+      toast.error("Failed to add student");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+      toast.success("Student added successfully");
+      reset();
+    },
   });
 
   const {
@@ -48,9 +64,14 @@ const AddStudent: React.FC = () => {
     formState: { errors },
   } = useForm<InputData>();
 
-  const onSubmit: SubmitHandler<InputData> = (data) => {
-    console.log(data);
-    reset();
+  const onSubmit: SubmitHandler<InputData> = async (data) => {
+    const studentData = {
+      studentId: data.studentId || null,
+      name: data.name,
+      departmentId: parseInt(data.departmentId),
+      year: data.year,
+    };
+    await addStudent(studentData);
   };
 
   const selectedDepartment = watch("departmentId");
@@ -72,6 +93,15 @@ const AddStudent: React.FC = () => {
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="name">Student ID</Label>
+              <Input
+                {...register("studentId")}
+                type="number"
+                placeholder="Enter student ID (optional)"
+              />
+            </div>
+
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -138,7 +168,11 @@ const AddStudent: React.FC = () => {
                 <p className="text-sm text-red-500">{errors.year.message}</p>
               )}
             </div>
-            <Button type="submit" className="w-full mt-3 Nunito-SemiBold">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full mt-3 Nunito-SemiBold"
+            >
               Submit
             </Button>
           </form>

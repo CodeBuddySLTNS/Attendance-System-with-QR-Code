@@ -10,11 +10,12 @@ const LandingPage: React.FC = () => {
   const handleScanResult = async (result: IDetectedBarcode[]) => {
     try {
       const data = JSON.parse(result[0].rawValue);
-      if (!data?.name || !data?.courseAndYear)
+      if (!data.userId || !data?.name || !data?.courseAndYear)
         throw new Error("Invalid Format!");
 
       const presentValue: PresentStudent = {
         type: "in",
+        userId: data.userId,
         name: data.name,
         courseAndYear: data.courseAndYear,
         date: new Date(),

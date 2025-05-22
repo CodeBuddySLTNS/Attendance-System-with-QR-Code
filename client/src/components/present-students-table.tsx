@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -13,10 +13,21 @@ import type { PresentStudent } from "../types/students.types";
 const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
   data,
 }) => {
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.scrollTo({
+        top: divRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [data]);
+
   return (
     <div className="h-full grid grid-cols-1 grid-rows-[max-content_1fr]">
       <div className="text-xl Nunito-SemiBold">List of Present Students</div>
-      <div className="h-full border overflow-y-auto">
+      <div ref={divRef} className="h-full border overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -43,7 +54,6 @@ const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
                       day: "2-digit",
                       hour: "2-digit",
                       minute: "2-digit",
-                      hour12: false,
                     })}
                   </TableCell>
                   <TableCell className="flex justify-center">

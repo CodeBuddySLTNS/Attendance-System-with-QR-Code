@@ -3,6 +3,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LandingPage from "./pages/landing-page";
 import Layout from "./layout";
 import StudentsPage from "./pages/students-page";
+import { Toaster } from "./components/ui/toaster";
 
 const App: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/students" element={<StudentsPage />} />
         </Routes>
+        <Toaster position="top-center" richColors />
       </Layout>
     </Router>
   );

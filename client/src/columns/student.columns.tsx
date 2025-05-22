@@ -1,11 +1,15 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Edit, QrCode, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Student } from "@/types/students.types";
 
-export const studentColumns: ColumnDef<Student>[] = [
+export const studentColumns = (
+  QrCodeFn: (student: Student) => void,
+  editFn: (student: Student) => void,
+  deleteFn: (student: Student) => void
+): ColumnDef<Student>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -41,7 +45,7 @@ export const studentColumns: ColumnDef<Student>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "departmentAcronym",
@@ -80,7 +84,38 @@ export const studentColumns: ColumnDef<Student>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="uppercase text-center">{row.getValue("year")}</div>
+      <div className="text-center">{row.getValue("year")}</div>
+    ),
+  },
+  {
+    id: "action",
+
+    header: () => <div className="w-auto text-center">Action</div>,
+    cell: ({ row }) => (
+      <div className="w-auto flex items-center justify-center gap-2">
+        <Button
+          size="sm"
+          className="bg-green-700 text-white hover:bg-green-600 cursor-pointer"
+          onClick={() => QrCodeFn(row.original)}
+        >
+          <QrCode />
+        </Button>
+        <Button
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => editFn(row.original)}
+        >
+          <Edit />
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          className="cursor-pointer"
+          onClick={() => deleteFn(row.original)}
+        >
+          <Trash2 />
+        </Button>
+      </div>
     ),
   },
 ];

@@ -1,60 +1,58 @@
 import type { Student } from "@/types/students.types";
-import DataTable from "@/components/ui/data-table";
+import DataTable from "@/components/data-table";
 import { studentColumns } from "@/columns/student.columns";
 import AddStudent from "@/components/add-student";
+import { coleAPI } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import GenerateQrCode from "@/components/generate-qrcode";
+import { useState } from "react";
 
-const data: Student[] = [
-  {
-    userId: 1,
-    studentId: 121233,
-    name: "John Doe",
-    departmentName: "Bachelor of Science in Information Technology",
-    departmentAcronym: "BSIT",
-    year: 2,
-  },
-  {
-    userId: 2,
-    studentId: 121234,
-    name: "Jane Smith",
-    departmentName: "Bachelor of Science in Computer Science",
-    departmentAcronym: "BSCS",
-    year: 3,
-  },
-  {
-    userId: 3,
-    studentId: 121235,
-    name: "Alice Johnson",
-    departmentName: "Bachelor of Science in Information Systems",
-    departmentAcronym: "BSIS",
-    year: 4,
-  },
-  {
-    userId: 4,
-    studentId: 121236,
-    name: "Bob Brown",
-    departmentName: "Bachelor of Science in Computer Engineering",
-    departmentAcronym: "BSCpE",
-    year: 1,
-  },
-  {
-    userId: 5,
-    studentId: 121237,
-    name: "Charlie Davis",
-    departmentName:
-      "Bachelor of Science in Electronics and Communications Engineering",
-    departmentAcronym: "BSECE",
-    year: 2,
-  },
-];
+interface OpenState {
+  qrCode: { status: boolean; student: Student };
+  edit: { status: boolean; student: Student };
+  delete: { status: boolean; student: Student };
+}
 
 export default function StudentsPage() {
+  const [open, setOpen] = useState<OpenState>({
+    qrCode: { status: false, student: {} as Student },
+    edit: { status: false, student: {} as Student },
+    delete: { status: false, student: {} as Student },
+  });
+
+  const { data } = useQuery<Student[]>({
+    queryKey: ["students"],
+    queryFn: coleAPI("/students"),
+  });
+
+  const generateQrCode = (student: Student) => {
+    setOpen((prev) => ({ ...prev, qrCode: { status: true, student } }));
+  };
+  const updateStudent = () => {};
+  const deleteStudent = () => {};
+
   return (
     <div className="p-8 pt-4">
       <div className="flex justify-between">
         <h1 className="text-2xl Nunito-SemiBold">List of Students</h1>
         <AddStudent />
       </div>
-      <DataTable data={data} columns={studentColumns} />
+
+      <DataTable
+        data={data || []}
+        columns={studentColumns(generateQrCode, updateStudent, deleteStudent)}
+      />
+
+      <GenerateQrCode
+        isOpen={open.qrCode.status}
+        student={open.qrCode.student}
+        close={() =>
+          setOpen((prev) => ({
+            ...prev,
+            qrCode: { status: false, student: {} as Student },
+          }))
+        }
+      />
     </div>
   );
 }
