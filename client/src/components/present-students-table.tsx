@@ -12,6 +12,7 @@ import type { PresentStudent } from "../types/students.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { coleAPI } from "@/lib/utils";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
   data,
@@ -21,7 +22,15 @@ const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
 
   const { mutateAsync: deleteAttendance } = useMutation({
     mutationFn: coleAPI("/attendances/delete", "DELETE"),
-    onError: () => toast.error("Failed to delete attendance"),
+    onError: (e: AxiosError<{ message?: string }>) => {
+      if (e.status === 403) {
+        return toast.error("You are not authorized to delete this attendance");
+      }
+      if (e.response?.data?.message) {
+        return toast.error(e.response.data.message);
+      }
+      toast.error("Failed to delete attendance");
+    },
   });
 
   const handleDelete = async (student: PresentStudent) => {
