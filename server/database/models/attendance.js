@@ -6,20 +6,28 @@ export const Attendance = {
       `
       SELECT 
         u.userId, u.name, CONCAT(d.acronym, " ", u.year) AS courseAndYear, 
-        a.type, a.date
+        a.type, a.dateTime AS date
       FROM attendances a
       JOIN users u ON a.userId = u.userId
-      JOIN users d ON d.departmentId = u.departmentId
+      JOIN departments d ON d.departmentId = u.departmentId
       WHERE DATE(a.date) = ?
+      ORDER BY a.dateTime ASC
     `,
       [date]
     );
   },
 
-  add: async (userId, type, date) => {
+  add: async (userId, type, dateTime, date) => {
     return await sqlQuery(
-      `INSERT INTO attendances (userId, type, date) VALUES (?, ?, ?)`,
-      [userId, type, date]
+      `INSERT INTO attendances (userId, type, dateTime, date) VALUES (?, ?, ?, ?)`,
+      [userId, type, dateTime, date]
     );
+  },
+
+  deleteByUserIdDate: async (userId, date) => {
+    return await sqlQuery(`DELETE attendances WHERE userId = ? AND date = ?`, [
+      userId,
+      date,
+    ]);
   },
 };

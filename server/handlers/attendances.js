@@ -9,16 +9,28 @@ const attendances = async (req, res) => {
 };
 
 const addAttendance = async (req, res) => {
-  const { userId, type, date } = req.body;
+  const { userId, type, dateTime, date } = req.body;
 
-  if (!userId || !type || !date)
+  if (!userId || !type || !dateTime || !date)
     throw new CustomError("Missing required fields", status.BAD_REQUEST);
 
-  const result = await Attendance.add(userId, type, date);
+  const result = await Attendance.add(userId, type, dateTime, date);
+  res.send(result);
+};
+
+const deleteAttendance = async (req, res) => {
+  const { userId, date } = req.body;
+  console.log(req.body);
+
+  if (!userId || !date)
+    throw new CustomError("Missing required fields", status.BAD_REQUEST);
+
+  const result = await Attendance.deleteByUserIdDate(userId, date);
   res.send(result);
 };
 
 export default {
   attendances,
   addAttendance,
+  deleteAttendance,
 };

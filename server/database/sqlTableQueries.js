@@ -16,10 +16,12 @@ export const sqlTableQueries = `
     );
 
     CREATE TABLE attendances (
-        attendanceId INT PRIMARY KEY AUTO_INCREMENT,
+        attendanceId INT AUTO_INCREMENT UNIQUE,
         userId INT NOT NULL,
         type VARCHAR(10) NOT NULL,
+        dateTime DATETIME NOT NULL,
         date DATE NOT NULL,
+        PRIMARY KEY (userId, date),
         FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
     ); 
 `;
