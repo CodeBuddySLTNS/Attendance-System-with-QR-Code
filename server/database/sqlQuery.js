@@ -23,6 +23,14 @@ export const sqlQuery = async (query, params) => {
             status.INTERNAL_SERVER_ERROR
           );
 
+        case "ER_NO_REFERENCED_ROW_2":
+        case "ER_ROW_IS_REFERENCED_2":
+          throw new CustomError(
+            "User was not registered.",
+            status.BAD_REQUEST,
+            error
+          );
+
         default:
           throw new CustomError(error.message, status.CONFLICT, error);
       }

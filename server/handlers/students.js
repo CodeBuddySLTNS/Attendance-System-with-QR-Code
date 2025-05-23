@@ -18,7 +18,26 @@ const addStudent = async (req, res) => {
   res.status(status.CREATED).send(result);
 };
 
+const editStudent = async (req, res) => {
+  const { studentId, name, departmentId, year } = req.body;
+
+  if ((!studentId, !name, !departmentId, !year)) {
+    throw new CustomError("All fields are required", status.BAD_REQUEST);
+  }
+
+  const result = await Student.update(req.body);
+  res.status(status.CREATED).send(result);
+};
+
+const deleteStudent = async (req, res) => {
+  const { userId } = req.body;
+  const result = await Student.delete(userId);
+  res.send(result);
+};
+
 export default {
   students,
   addStudent,
+  editStudent,
+  deleteStudent,
 };

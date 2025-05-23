@@ -24,4 +24,22 @@ export const Student = {
     ];
     return await sqlQuery(query, params);
   },
+
+  update: async (student) => {
+    const query = `
+      UPDATE users SET studentId = ?, name = ?, departmentId = ?, year = ? WHERE userId = ?`;
+    const params = [
+      student.studentId,
+      student.name,
+      student.departmentId,
+      student.year,
+      student.userId,
+    ];
+    return await sqlQuery(query, params);
+  },
+
+  delete: async (userId) => {
+    const query = `DELETE FROM users WHERE userId = ?`;
+    return await sqlQuery(query, [userId]);
+  },
 };
