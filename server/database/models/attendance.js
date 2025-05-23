@@ -24,10 +24,10 @@ export const Attendance = {
     );
   },
 
-  deleteByUserIdDate: async (userId, date) => {
-    return await sqlQuery(`DELETE attendances WHERE userId = ? AND date = ?`, [
-      userId,
-      date,
-    ]);
+  deleteByUserIdDate: async (userId, dateTime) => {
+    return await sqlQuery(
+      `DELETE FROM attendances WHERE userId = ? AND dateTime = ?`,
+      [userId, dateTime]
+    );
   },
 };

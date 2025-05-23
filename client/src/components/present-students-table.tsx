@@ -9,11 +9,32 @@ import {
 } from "./ui/table";
 import { X } from "lucide-react";
 import type { PresentStudent } from "../types/students.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { coleAPI } from "@/lib/utils";
+import { toast } from "sonner";
 
 const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
   data,
 }) => {
+  const queryClient = useQueryClient();
   const divRef = useRef<HTMLDivElement>(null);
+
+  const { mutateAsync: deleteAttendance } = useMutation({
+    mutationFn: coleAPI("/attendances/delete", "DELETE"),
+    onError: () => toast.error("Failed to delete attendance"),
+  });
+
+  const handleDelete = async (student: PresentStudent) => {
+    try {
+      const date = new Date(student.date)
+        .toLocaleString("sv-SE", { hour12: false })
+        .replace("T", " ");
+      await deleteAttendance({ userId: student.userId, date });
+      queryClient.invalidateQueries({ queryKey: ["attendances"] });
+    } catch (e) {
+      if (e instanceof Error) console.error(e.message);
+    }
+  };
 
   useEffect(() => {
     if (divRef.current) {
@@ -57,7 +78,11 @@ const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
                     })}
                   </TableCell>
                   <TableCell className="flex justify-center">
-                    <X size={18} className="w-6 rounded-[3.5px] bg-red-500" />
+                    <X
+                      size={18}
+                      className="w-6 rounded-[3.5px] bg-red-500"
+                      onClick={() => handleDelete(d)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
