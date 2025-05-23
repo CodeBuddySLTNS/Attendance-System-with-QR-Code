@@ -1,18 +1,19 @@
-import React from "react";
+import type { Student } from "@/types/students.types";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+} from "@/components/ui/dialog";
+import React, { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Department, InputData } from "./add-student";
 import { coleAPI } from "@/lib/utils";
+import { toast } from "sonner";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,
@@ -20,22 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { toast } from "sonner";
+import { Button } from "./ui/button";
 
-export interface InputData {
-  studentId?: number;
-  name: string;
-  departmentId: string;
-  year: number;
-}
-
-export interface Department {
-  departmentId: number;
-  departmentName: string;
-  acronym: string;
-}
-
-const AddStudent: React.FC = () => {
+const EditStudent: React.FC<{
+  isOpen: boolean;
+  close: () => void;
+  student: Student;
+}> = ({ isOpen, close, student }) => {
   const queryClient = useQueryClient();
 
   const { data: departments } = useQuery<Department[]>({
@@ -43,15 +35,15 @@ const AddStudent: React.FC = () => {
     queryFn: coleAPI("/departments"),
   });
 
-  const { mutateAsync: addStudent, isPending } = useMutation({
-    mutationFn: coleAPI("/students/add", "POST"),
+  const { mutateAsync: updateStudent, isPending } = useMutation({
+    mutationFn: coleAPI("/students/update", "PATCH"),
     onError: () => {
-      toast.error("Failed to add student");
+      toast.error("Failed to update student");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
-      toast.success("Student added successfully");
-      reset();
+      toast.success("Student updated successfully");
+      close();
     },
   });
 
@@ -59,44 +51,60 @@ const AddStudent: React.FC = () => {
     register,
     handleSubmit,
     control,
-    watch,
     reset,
     formState: { errors },
-  } = useForm<InputData>();
+  } = useForm<InputData>({
+    defaultValues: {
+      studentId: student.studentId ?? "",
+      name: student.name ?? "",
+      departmentId:
+        departments
+          ?.find((dep) => dep.departmentName === student.departmentName)
+          ?.departmentId.toString() ?? "",
+      year: student.year ?? 1,
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      studentId: student.studentId ?? "",
+      name: student.name ?? "",
+      departmentId:
+        departments
+          ?.find((dep) => dep.departmentName === student.departmentName)
+          ?.departmentId.toString() ?? "",
+      year: student.year ?? 1,
+    });
+  }, [student, departments, reset]);
 
   const onSubmit: SubmitHandler<InputData> = async (data) => {
     const studentData = {
+      userId: student.userId,
       studentId: data.studentId || null,
       name: data.name,
       departmentId: parseInt(data.departmentId),
       year: data.year,
     };
-    await addStudent(studentData);
+    await updateStudent(studentData);
   };
-
-  const selectedDepartment = watch("departmentId");
 
   return (
     <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button size="sm" className="cursor-pointer">
-            Add Student
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="gap-2">
+      <Dialog open={isOpen} onOpenChange={close}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="Nunito-Bold text-xl text-center">
-              Add Student
-            </DialogTitle>
-            <DialogDescription />
+            <DialogTitle>Edit Student</DialogTitle>
+            <DialogDescription>
+              Update the student information below.
+            </DialogDescription>
           </DialogHeader>
+
           <form
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="name">Student ID</Label>
+              <Label htmlFor="studentId">Student ID</Label>
               <Input
                 {...register("studentId")}
                 type="number"
@@ -123,11 +131,10 @@ const AddStudent: React.FC = () => {
               <Controller
                 control={control}
                 name="departmentId"
-                rules={{ required: "Department is required" }}
                 render={({ field }) => (
                   <Select
                     onValueChange={field.onChange}
-                    value={selectedDepartment ?? ""}
+                    value={field.value ?? ""}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
@@ -144,7 +151,7 @@ const AddStudent: React.FC = () => {
                     </SelectContent>
                   </Select>
                 )}
-              />{" "}
+              />
               {errors.departmentId && (
                 <p className="text-sm text-red-500">
                   {errors.departmentId.message}
@@ -175,7 +182,7 @@ const AddStudent: React.FC = () => {
               disabled={isPending}
               className="w-full mt-3 Nunito-SemiBold"
             >
-              Submit
+              Save Changes
             </Button>
           </form>
         </DialogContent>
@@ -184,4 +191,4 @@ const AddStudent: React.FC = () => {
   );
 };
 
-export default AddStudent;
+export default EditStudent;
