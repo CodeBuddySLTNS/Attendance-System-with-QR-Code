@@ -8,7 +8,7 @@ const students = async (req, res) => {
 };
 
 const addStudent = async (req, res) => {
-  const { studentId, name, departmentId, year } = req.body;
+  const { studentId, name, departmentId, year } = req.body || {};
 
   if ((!studentId, !name, !departmentId, !year)) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
@@ -19,7 +19,7 @@ const addStudent = async (req, res) => {
 };
 
 const editStudent = async (req, res) => {
-  const { studentId, name, departmentId, year } = req.body;
+  const { studentId, name, departmentId, year } = req.body || {};
 
   if ((!studentId, !name, !departmentId, !year)) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
@@ -30,7 +30,7 @@ const editStudent = async (req, res) => {
 };
 
 const deleteStudent = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.body || {};
   const result = await Student.delete(userId);
   res.send(result);
 };

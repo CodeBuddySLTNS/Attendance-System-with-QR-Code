@@ -3,13 +3,13 @@ import { Attendance } from "../database/models/attendance.js";
 import { CustomError } from "../lib/utils.js";
 
 const attendances = async (req, res) => {
-  const { date } = req.query;
+  const { date } = req.query || {};
   const result = await Attendance.getByDate(date);
   res.send(result);
 };
 
 const addAttendance = async (req, res) => {
-  const { userId, type, dateTime, date } = req.body;
+  const { userId, type, dateTime, date } = req.body || {};
 
   if (!userId || !type || !dateTime || !date)
     throw new CustomError("Missing required fields", status.BAD_REQUEST);
@@ -19,7 +19,7 @@ const addAttendance = async (req, res) => {
 };
 
 const deleteAttendance = async (req, res) => {
-  const { userId, date } = req.body;
+  const { userId, date } = req.body || {};
   console.log(req.body);
 
   if (!userId || !date)

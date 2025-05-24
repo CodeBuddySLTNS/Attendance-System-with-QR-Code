@@ -4,7 +4,7 @@ import { CustomError, generateToken } from "../lib/utils.js";
 import { sqlQuery } from "../database/sqlQuery.js";
 
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body || {};
 
   if (!username || !password) {
     throw new CustomError("Missing fields are required.", status.BAD_REQUEST);
@@ -25,6 +25,7 @@ const login = async (req, res) => {
     const token = generateToken({ userId: admin[0].userId });
     return res.json({ token });
   } else {
+    throw new CustomError("Incorrect credentials", status.BAD_REQUEST);
     // const hashed = await bcrypt.hash(password, 10);
     // const result = await sqlQuery(
     //   `INSERT INTO users(name, password, role, year)
@@ -36,7 +37,6 @@ const login = async (req, res) => {
     //   const token = generateToken({ userId: result.insertId });
     //   return res.json({ token });
     // }
-    throw new CustomError("Incorrect credentials", status.BAD_REQUEST);
   }
 };
 
