@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import type { PresentStudent } from "@/types/students.types";
+import type { StudentByDepartment } from "@/types/students.types";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
-export const attendanceRecordColumns: ColumnDef<PresentStudent>[] = [
+export const attendanceRecordColumns: ColumnDef<StudentByDepartment>[] = [
   {
     id: "select",
     header: ({ table }) => (
