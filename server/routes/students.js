@@ -8,5 +8,6 @@ router.get("/", tryCatch(handler.students));
 router.post("/add", tryCatch(handler.addStudent));
 router.patch("/update", tryCatch(handler.editStudent));
 router.delete("/delete", tryCatch(handler.deleteStudent));
+router.get("/bydepartment", tryCatch(handler.studentsByDepartment));
 
 export default router;

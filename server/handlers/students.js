@@ -7,10 +7,25 @@ const students = async (req, res) => {
   res.send(result);
 };
 
+const studentsByDepartment = async (req, res) => {
+  const { date, departmentId, year } = req.query || {};
+  console.log(req.query);
+  if (!date || !departmentId || !year) {
+    throw new CustomError("All fields are required", status.BAD_REQUEST);
+  }
+
+  const result = await Student.getStudentsByDepartment(
+    date,
+    departmentId,
+    year
+  );
+  res.send(result);
+};
+
 const addStudent = async (req, res) => {
   const { studentId, name, departmentId, year } = req.body || {};
 
-  if ((!studentId, !name, !departmentId, !year)) {
+  if (!studentId || !name || !departmentId || !year) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
   }
 
@@ -21,7 +36,7 @@ const addStudent = async (req, res) => {
 const editStudent = async (req, res) => {
   const { studentId, name, departmentId, year } = req.body || {};
 
-  if ((!studentId, !name, !departmentId, !year)) {
+  if (!studentId || !name || !departmentId || !year) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
   }
 
@@ -40,4 +55,5 @@ export default {
   addStudent,
   editStudent,
   deleteStudent,
+  studentsByDepartment,
 };
