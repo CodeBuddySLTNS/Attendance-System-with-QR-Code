@@ -39,6 +39,14 @@ const Header: React.FC = () => {
         >
           Students
         </Link>
+        <Link
+          to="/attendance-records"
+          className={`${
+            page === "attendance-records" && "border-b-2 border-[#E3D095]"
+          }`}
+        >
+          Attendance Records
+        </Link>
       </div>
 
       <div>

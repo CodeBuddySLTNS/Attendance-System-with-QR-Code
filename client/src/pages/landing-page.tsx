@@ -100,13 +100,13 @@ const LandingPage: React.FC = () => {
               }}
             />
           </div>
-          <div className="h-full flex items-center justify-center gap-2 p-1 text-2xl font-bold border rounded shadow-md">
+          <div className="h-full flex items-center justify-center gap-2 text-[1.8rem] 2xl:text-5xl font-bold border rounded shadow-md">
             <span>{time.hours}</span>:<span>{time.minutes}</span>:
             <span>{time.seconds}</span>
             <span>{time.amPm}</span>
           </div>
         </Card>
-        <Card className="p-4 rounded-lg gap-1 overflow-hidden relative">
+        <Card className="h-full p-4 rounded-lg gap-1 overflow-hidden relative">
           <BgImageLayer />
           <PresentStudentsTabe data={attendances || []} />
         </Card>

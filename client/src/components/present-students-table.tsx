@@ -55,8 +55,17 @@ const PresentStudentsTabe: React.FC<{ data: PresentStudent[] }> = ({
   }, [data]);
 
   return (
-    <div className="h-full grid grid-cols-1 grid-rows-[max-content_1fr]">
-      <div className="text-xl Nunito-SemiBold">List of Present Students</div>
+    <div className="h-full grid grid-cols-1 grid-rows-[max-content_1fr] gap-1 z-[1]">
+      <div className="flex justify-between text-xl Nunito-SemiBold">
+        <h2>List of Present Students</h2>
+        <p>
+          {new Date().toLocaleString("en-US", {
+            month: "long",
+            day: "2-digit",
+            year: "numeric",
+          })}
+        </p>
+      </div>
       <div ref={divRef} className="h-full border overflow-y-auto">
         <Table>
           <TableHeader>

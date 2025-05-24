@@ -7,6 +7,7 @@ import { Toaster } from "./components/ui/toaster";
 import { useQuery } from "@tanstack/react-query";
 import { coleAPI } from "./lib/utils";
 import { useMainStore } from "./store";
+import AttendanceRecords from "./pages/attendance-records";
 
 const App: React.FC = () => {
   const { data } = useQuery({
@@ -24,6 +25,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/students" element={<StudentsPage />} />
+          <Route path="/attendance-records" element={<AttendanceRecords />} />
         </Routes>
         <Toaster position="top-center" richColors />
       </Layout>

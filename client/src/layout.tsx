@@ -23,6 +23,11 @@ const Layout: React.FC<LayoutNode> = ({ children }) => {
         if (!loggedIn) navigate("/");
         setPage("students");
         break;
+
+      case "/attendance-records":
+        if (!loggedIn) navigate("/");
+        setPage("attendance-records");
+        break;
     }
   }, [location.pathname, setPage, loggedIn, navigate]);
 
