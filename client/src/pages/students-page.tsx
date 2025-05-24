@@ -49,7 +49,7 @@ export default function StudentsPage() {
           <AddStudent />
         </div>
 
-        <DataTable
+        <DataTable<Student>
           data={data || []}
           columns={studentColumns(generateQrCode, editStudent, deleteStudent)}
         />

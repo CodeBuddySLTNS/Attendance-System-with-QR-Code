@@ -28,15 +28,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Student } from "@/types/students.types";
 import { useState } from "react";
 
-export default function DataTable({
+export default function DataTable<T>({
   data,
   columns,
 }: {
-  data: Student[] | [];
-  columns: ColumnDef<Student>[];
+  data: T[] | [];
+  columns: ColumnDef<T>[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
