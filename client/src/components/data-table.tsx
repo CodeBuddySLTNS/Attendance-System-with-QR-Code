@@ -45,6 +45,7 @@ export default function DataTable<T>({
   const table = useReactTable({
     data,
     columns,
+    enableRowSelection: true,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

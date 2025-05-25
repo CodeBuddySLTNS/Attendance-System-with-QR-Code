@@ -23,12 +23,11 @@ import type {
 } from "@/types/students.types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, UserMinus, UserPlus, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface DepartmentYear {
   departmentId: string;
-  departmentName: string;
   year: string;
 }
 
@@ -37,7 +36,6 @@ const AttendanceRecords = () => {
   const [date, setDate] = useState<Date>();
   const [depYear, setDepYear] = useState<DepartmentYear>({
     departmentId: "",
-    departmentName: "",
     year: "",
   });
 
@@ -63,17 +61,31 @@ const AttendanceRecords = () => {
   });
 
   useEffect(() => {
-    if (depYear.departmentId && depYear.year) {
+    if ((depYear.departmentId && depYear.year) || date) {
       queryClient.invalidateQueries({ queryKey: ["studentsbydepartment"] });
     }
   }, [date, depYear, queryClient]);
 
   return (
-    <div className="w-full h-full p-8">
+    <div className="w-full h-full p-8 pt-5">
       <BgImageLayer />
       <div className="h-full relative z-[1]">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-semibold">Attendance Records</h1>
+        <div className="flex justify-between items-center gap-4">
+          <h1 className="text-2xl font-semibold truncate leading-6">
+            Attendance Records
+          </h1>
+
+          <div className="Nunito-Bold truncate flex items-center">
+            {depYear.departmentId && departments?.length && depYear.year
+              ? `${
+                  departments.find(
+                    (dep) =>
+                      dep.departmentId.toString() === depYear.departmentId
+                  )?.departmentName || "Department not found"
+                } ${depYear.year}`
+              : "Please select department and year first"}
+          </div>
+
           <div>
             <Popover>
               <PopoverTrigger asChild>
@@ -95,8 +107,8 @@ const AttendanceRecords = () => {
           </div>
         </div>
 
-        <div className="w-full mt-2 grid grid-cols-2 gap-4">
-          <div>
+        <div className="w-full mt-4 grid grid-cols-2 gap-4">
+          <div className="flex gap-2">
             <Select
               value={depYear.departmentId.toString()}
               onValueChange={(value) =>
@@ -121,8 +133,8 @@ const AttendanceRecords = () => {
                 setDepYear((prev) => ({ ...prev, year: value }))
               }
             >
-              <SelectTrigger className="w-[300px] text-left">
-                <SelectValue placeholder="Select department"></SelectValue>
+              <SelectTrigger className="w-[120px] text-left">
+                <SelectValue placeholder="Select year"></SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="1">1st year</SelectItem>
@@ -131,6 +143,31 @@ const AttendanceRecords = () => {
                 <SelectItem value="4">4th year</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="h-full flex items-center gap-2 justify-between px-2 border rounded shadow bg-[#E0E7FF] text-[#3730A3] relative">
+              <Users className="absolute bottom-1.5 right-4.5 text-[#818CF8]" />
+              <span className="Nunito-Medium">Total Students:</span>
+              <span className="text-xl relative z-[1]">
+                {students?.totalStudents}
+              </span>
+            </div>
+
+            <div className="h-full flex items-center gap-2 justify-between px-2 border rounded shadow bg-[#D1FAE5] text-[#065F46] relative">
+              <UserPlus className="absolute bottom-1.5 right-5 text-[#6EE7B7]" />
+              <span className="Nunito-Medium">Present:</span>
+              <span className="text-xl relative z-[1]">
+                {students?.presentCount}
+              </span>
+            </div>
+
+            <div className="h-full flex items-center gap-2 justify-between px-2 border rounded shadow bg-[#FEE2E2] text-[#991B1B] relative">
+              <UserMinus className="absolute bottom-1.5 right-5 text-[#FCA5A5]" />
+              <span className="Nunito-Medium">Absent:</span>
+              <span className="text-xl relative z-[1]">
+                {students?.absentCount}
+              </span>
+            </div>
           </div>
         </div>
 

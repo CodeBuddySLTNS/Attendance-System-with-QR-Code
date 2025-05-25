@@ -42,4 +42,28 @@ export const attendanceRecordColumns: ColumnDef<StudentByDepartment>[] = [
     },
     cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
   },
+  {
+    accessorKey: "isPresent",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="w-full text-center"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue("isPresent") ? (
+          <span className="text-green-700">Present</span>
+        ) : (
+          <span className="text-red-500">Absent</span>
+        )}
+      </div>
+    ),
+  },
 ];

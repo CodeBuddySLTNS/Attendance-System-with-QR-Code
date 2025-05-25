@@ -9,7 +9,6 @@ const students = async (req, res) => {
 
 const studentsByDepartment = async (req, res) => {
   const { date, departmentId, year } = req.query || {};
-  console.log(req.query);
   if (!date || !departmentId || !year) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
   }
