@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch --env-file=.env index ./"
+    "dev": "node --watch --env-file=.env index ./",
+    "setup": "node ./database/setupDb"
   },
   "keywords": [],
   "author": "",
