@@ -31,7 +31,7 @@ interface DepartmentYear {
   year: string;
 }
 
-const AttendanceRecords = () => {
+const AttendanceRecord = () => {
   const queryClient = useQueryClient();
   const [date, setDate] = useState<Date>();
   const [depYear, setDepYear] = useState<DepartmentYear>({
@@ -180,4 +180,4 @@ const AttendanceRecords = () => {
   );
 };
 
-export default AttendanceRecords;
+export default AttendanceRecord;
