@@ -1,7 +1,7 @@
-import { sqlQuery } from "./sqlQuery";
-import { insertDepartments, sqlTableQueries } from "./sqlTableQueries";
+import { sqlQuery } from "./sqlQuery.js";
+import { insertDepartments, sqlTableQueries } from "./sqlTableQueries.js";
 
-export const setupDb = async () => {
+const setupDb = async () => {
   console.log("Setting up database...");
   await sqlQuery(sqlTableQueries);
   console.log("Database setup successful!");
@@ -9,3 +9,5 @@ export const setupDb = async () => {
   await sqlQuery(insertDepartments);
   console.log("Departments inserted successfully!");
 };
+
+setupDb();

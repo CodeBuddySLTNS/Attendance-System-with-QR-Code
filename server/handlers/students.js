@@ -24,7 +24,7 @@ const studentsByDepartment = async (req, res) => {
 const addStudent = async (req, res) => {
   const { studentId, name, departmentId, year } = req.body || {};
 
-  if (!studentId || !name || !departmentId || !year) {
+  if (!name || !departmentId || !year) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
   }
 

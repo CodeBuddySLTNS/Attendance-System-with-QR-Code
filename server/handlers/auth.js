@@ -2,6 +2,7 @@ import status from "http-status";
 import bcrypt from "bcryptjs";
 import { CustomError, generateToken } from "../lib/utils.js";
 import { sqlQuery } from "../database/sqlQuery.js";
+import { User } from "../database/models/users.js";
 
 const login = async (req, res) => {
   const { username, password } = req.body || {};
@@ -41,7 +42,10 @@ const login = async (req, res) => {
 };
 
 const session = async (req, res) => {
-  res.json({ valid: true });
+  const user = await User.getInfo(res.locals.userId);
+  delete user.password;
+
+  res.send(user);
 };
 
 export default {
