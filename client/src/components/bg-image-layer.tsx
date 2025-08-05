@@ -6,7 +6,7 @@ const BgImageLayer = () => {
       <img
         src={bgImage}
         alt="Background"
-        className="opacity-[11%] w-[300px] md:w-[400px]"
+        className="opacity-[25%] w-[300px] md:w-[400px]"
       />
     </div>
   );

@@ -1,15 +1,21 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useMainStore } from "../store";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
-  const page = useMainStore((state) => state.page);
+  // const page = useMainStore((state) => state.page);
   const loggedIn = useMainStore((state) => state.loggedIn);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     useMainStore.getState().setLoggedIn(false);
+    useMainStore.getState().setUser(null);
     localStorage.removeItem("token");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1000);
   };
 
   return (
