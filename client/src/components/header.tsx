@@ -22,7 +22,7 @@ const Header: React.FC = () => {
           <span>QR Code Attendance System</span>
         </div>
 
-        <div
+        {/* <div
           className={`${
             !loggedIn && "hidden"
           } text-white Nunito-Medium flex gap-4`}
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
           >
             Attendance Records
           </Link>
-        </div>
+        </div> */}
 
         <div>
           <Button variant="secondary" size="sm" onClick={handleLogout}>
