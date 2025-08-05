@@ -2,6 +2,8 @@
 @import "./fonts.css";
 @import "tw-animate-css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -91,7 +93,7 @@
 
   --popover-foreground: oklch(0.129 0.042 264.695);
 
-  --primary: oklch(0.208 0.042 265.755);
+  --primary: #000000;
 
   --primary-foreground: oklch(0.984 0.003 247.858);
 
