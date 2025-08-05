@@ -36,3 +36,13 @@ export interface AttendanceRecords {
   absentCount: number;
   students: StudentByDepartment[];
 }
+
+export interface User {
+  userId: number;
+  name: string;
+  role: "student" | "teacher" | "admin";
+  departmentName?: string;
+  departmentAcronym?: string;
+  year?: number;
+  studentId?: number | null;
+}

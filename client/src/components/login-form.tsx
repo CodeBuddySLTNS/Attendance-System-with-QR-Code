@@ -32,6 +32,7 @@ export function LoginForm({
     mutationFn: coleAPI("/login", "POST"),
     onSuccess: (d) => {
       useMainStore.getState().setLoggedIn(true);
+      useMainStore.getState().setUser(d.user);
       localStorage.setItem("token", d.token);
       navigate("/");
       reset();
