@@ -1,6 +1,6 @@
 /*
  INSERT INTO users(name, password, role, year)
-      VALUES ('admin', $2b$10$xqpfTeyhL92u5BeEGEGH3eU6cfpTtGnXZy5WPE2TcMuvCCrZFjW3a, 'admin', 1)
+      VALUES ('admin', '$2b$10$xqpfTeyhL92u5BeEGEGH3eU6cfpTtGnXZy5WPE2TcMuvCCrZFjW3a', 'admin', 1)
 */
 
 export const sqlTableQueries = `
@@ -18,18 +18,9 @@ export const sqlTableQueries = `
         year TINYINT NOT NULL CHECK (year BETWEEN 1 AND 4),
         role ENUM('student', 'teacher', 'admin') NOT NULL DEFAULT "student",
         password VARCHAR(255),
+        photo VARCHAR(255),
         FOREIGN KEY (departmentId) REFERENCES departments(departmentId) ON DELETE CASCADE
     );
-
-    CREATE TABLE attendances (
-        attendanceId INT AUTO_INCREMENT UNIQUE,
-        userId INT NOT NULL,
-        type VARCHAR(10) NOT NULL,
-        dateTime DATETIME NOT NULL,
-        date DATE NOT NULL,
-        PRIMARY KEY (userId, date),
-        FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
-    ); 
 
     CREATE TABLE classes (
         classId INT PRIMARY KEY AUTO_INCREMENT,
@@ -46,6 +37,18 @@ export const sqlTableQueries = `
         FOREIGN KEY (classId) REFERENCES classes(classId) ON DELETE CASCADE,
         FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
     );
+
+    CREATE TABLE attendances (
+        attendanceId INT AUTO_INCREMENT UNIQUE,
+        classId INT NOT NULL,
+        userId INT NOT NULL,
+        type VARCHAR(10) NOT NULL,
+        dateTime DATETIME NOT NULL,
+        date DATE NOT NULL,
+        PRIMARY KEY (userId, classId, date),
+        FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE,
+        FOREIGN KEY (classId) REFERENCES classes(classId) ON DELETE CASCADE
+    ); 
 `;
 
 export const insertDepartments = `

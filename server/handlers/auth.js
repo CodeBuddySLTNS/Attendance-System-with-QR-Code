@@ -24,7 +24,10 @@ const login = async (req, res) => {
     }
 
     const token = generateToken({ userId: admin[0].userId });
-    return res.json({ token });
+    const user = await User.getInfo(admin[0].userId);
+    delete user.password;
+
+    return res.json({ token, user });
   } else {
     throw new CustomError("Incorrect credentials", status.BAD_REQUEST);
     // const hashed = await bcrypt.hash(password, 10);
