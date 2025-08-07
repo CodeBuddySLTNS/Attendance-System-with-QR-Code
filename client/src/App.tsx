@@ -18,7 +18,7 @@ const App: React.FC = () => {
   const user = useMainStore((state) => state.user);
   const { data, isLoading } = useQuery({
     queryKey: ["session"],
-    queryFn: coleAPI("/login/session"),
+    queryFn: coleAPI("/auth/session"),
   });
 
   useEffect(() => {
@@ -27,16 +27,16 @@ const App: React.FC = () => {
       useMainStore.getState().setUser(data);
     }
 
-    if (!isLoading && !data && !user) {
+    if (!isLoading && !data && !useMainStore.getState().user) {
       navigate("/login");
     }
-  }, [data, navigate, isLoading, user]);
+  }, [data, isLoading]);
 
   useEffect(() => {
-    // switch (location.pathname) {
-    //   case "/login":
-    //     if (user) navigate("/");
-    // }
+    switch (location.pathname) {
+      case "/login":
+        if (user) navigate("/");
+    }
   }, [location.pathname, user, navigate]);
 
   return (
