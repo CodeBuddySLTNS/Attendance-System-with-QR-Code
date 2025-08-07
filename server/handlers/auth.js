@@ -11,36 +11,22 @@ const login = async (req, res) => {
     throw new CustomError("Missing fields are required.", status.BAD_REQUEST);
   }
 
-  const admin = await sqlQuery(
-    `SELECT * FROM users WHERE name = ? AND role = "admin"`,
-    [username]
-  );
+  const user = await User.getInfoByUsername(username);
 
-  if (admin[0]) {
-    const isMatch = await bcrypt.compare(password, admin[0].password);
+  if (user) {
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       throw new CustomError("Incorrect credentials", status.BAD_REQUEST);
     }
 
-    const token = generateToken({ userId: admin[0].userId });
-    const user = await User.getInfo(admin[0].userId);
-    delete user.password;
+    const token = generateToken({ userId: user.userId });
+    const userData = await User.getInfo(user.userId);
+    delete userData.password;
 
-    return res.json({ token, user });
+    return res.json({ token, user: userData });
   } else {
     throw new CustomError("Incorrect credentials", status.BAD_REQUEST);
-    // const hashed = await bcrypt.hash(password, 10);
-    // const result = await sqlQuery(
-    //   `INSERT INTO users(name, password, role, year)
-    //   VALUES (?, ?, 'admin', 1)`,
-    //   [username, hashed]
-    // );
-
-    // if (result.insertId) {
-    //   const token = generateToken({ userId: result.insertId });
-    //   return res.json({ token });
-    // }
   }
 };
 
@@ -51,7 +37,19 @@ const session = async (req, res) => {
   res.send(user);
 };
 
+const signup = async (req, res) => {
+  const { name, username, password } = req.body;
+
+  if (!name || !username || !password) {
+    throw new CustomError("Missing fields are required.", status.BAD_REQUEST);
+  }
+
+  const result = await User.add(name, username, password);
+  res.send(result);
+};
+
 export default {
   login,
   session,
+  signup,
 };

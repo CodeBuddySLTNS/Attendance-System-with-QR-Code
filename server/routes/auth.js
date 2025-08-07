@@ -4,7 +4,8 @@ import { tryCatch } from "../lib/utils.js";
 
 const router = Router();
 
-router.post("/", tryCatch(handler.login));
+router.post("/login", tryCatch(handler.login));
+router.post("/signup", tryCatch(handler.signup));
 router.get("/session", tryCatch(handler.session));
 
 export default router;
