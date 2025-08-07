@@ -13,9 +13,7 @@ const Header: React.FC = () => {
     useMainStore.getState().setLoggedIn(false);
     useMainStore.getState().setUser(null);
     localStorage.removeItem("token");
-    setTimeout(() => {
-      navigate("/login");
-    }, 1000);
+    navigate("/login");
   };
 
   return (
