@@ -14,6 +14,7 @@ export const sqlTableQueries = `
         userId INT PRIMARY KEY AUTO_INCREMENT,
         studentId INT,
         name VARCHAR(100) NOT NULL,
+        username VARCHAR(100),
         departmentId INT,
         year TINYINT NOT NULL CHECK (year BETWEEN 1 AND 4),
         role ENUM('student', 'teacher', 'admin') NOT NULL DEFAULT "student",
