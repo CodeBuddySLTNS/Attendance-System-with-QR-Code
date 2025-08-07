@@ -16,7 +16,7 @@ app.use(cors());
 // app.use((req, res, next) => (console.log(req.path, req.method), next()));
 app.use(authenticate);
 
-app.use("/login", auth);
+app.use("/auth", auth);
 app.use("/students", students);
 app.use("/departments", departments);
 app.use("/attendances", attendances);
