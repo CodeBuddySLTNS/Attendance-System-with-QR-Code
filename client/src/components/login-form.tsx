@@ -29,7 +29,7 @@ export function LoginForm({
   const navigate = useNavigate();
 
   const { mutateAsync: login, isPending } = useMutation({
-    mutationFn: coleAPI("/login", "POST"),
+    mutationFn: coleAPI("/auth/login", "POST"),
     onSuccess: (d) => {
       useMainStore.getState().setLoggedIn(true);
       useMainStore.getState().setUser(d.user);

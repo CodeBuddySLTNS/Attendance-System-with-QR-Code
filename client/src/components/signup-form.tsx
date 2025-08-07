@@ -29,7 +29,7 @@ export function SignupForm({
   const navigate = useNavigate();
 
   const { mutateAsync: login, isPending } = useMutation({
-    mutationFn: coleAPI("/login", "POST"),
+    mutationFn: coleAPI("/auth/signup", "POST"),
     onSuccess: () => {
       toast.success("Account created successfully!");
       navigate("/login");
