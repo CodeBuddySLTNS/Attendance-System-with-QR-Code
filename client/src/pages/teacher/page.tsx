@@ -1,15 +1,17 @@
-import { Button } from "@/components/ui/button";
+import NewClass from "@/components/teacher/new-class";
 import { Card } from "@/components/ui/card";
 import { CalendarRange, Clock } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 const TeachersPage: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="w-full h-dvh flex flex-col items-center">
       <div className="w-[90%] sm:w-[80%] space-y-2.5">
         <div className="mt-6 sm:mt-8 flex justify-between">
           <h1 className="text-2xl Nunito-Bold">My Classes</h1>
-          <Button size="sm">New Class</Button>
+          <NewClass open={open} close={() => setOpen((prev) => !prev)} />
         </div>
         <Card className="p-4">
           <div className="flex justify-between">
