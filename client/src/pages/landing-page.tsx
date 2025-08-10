@@ -1,6 +1,7 @@
 import { useMainStore } from "@/store";
 import React from "react";
 import TeachersPage from "./teacher/page";
+import StudentsPage from "./students-page";
 
 const LandingPage: React.FC = () => {
   const user = useMainStore((state) => state.user);
@@ -8,8 +9,8 @@ const LandingPage: React.FC = () => {
   switch (user?.role) {
     case "teacher":
       return <TeachersPage />;
-    default:
-      return <div>ds</div>;
+    case "admin":
+      return <StudentsPage />;
   }
 };
 
