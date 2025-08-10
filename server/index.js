@@ -7,6 +7,7 @@ import auth from "./routes/auth.js";
 import students from "./routes/students.js";
 import departments from "./routes/departments.js";
 import attendances from "./routes/attendances.js";
+import classes from "./routes/classes.js";
 
 const app = express();
 const PORT = 5000;
@@ -20,6 +21,7 @@ app.use("/auth", auth);
 app.use("/students", students);
 app.use("/departments", departments);
 app.use("/attendances", attendances);
+app.use("/classes", classes);
 
 app.use(erroHandler);
 
