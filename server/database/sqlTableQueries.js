@@ -25,9 +25,11 @@ export const sqlTableQueries = `
 
     CREATE TABLE classes (
         classId INT PRIMARY KEY AUTO_INCREMENT,
+        teacherId INT NOT NULL,
         className VARCHAR(100) NOT NULL,
         departmentId INT NOT NULL,
         year TINYINT NOT NULL CHECK (year BETWEEN 1 AND 4),
+        FOREIGN KEY teacherId REFERENCES users(userId) ON DELETE CASCADE,
         FOREIGN KEY (departmentId) REFERENCES departments(departmentId) ON DELETE CASCADE
     );
 
