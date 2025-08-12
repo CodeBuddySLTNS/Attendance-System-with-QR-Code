@@ -22,17 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import type { ClassData } from "@/types/class.types";
 
-interface ClassData {
-  className: string;
-  departmentId: string;
-  year: number;
-}
-
-const NewClass: React.FC<{ open: boolean; close: () => void }> = ({
-  open,
-  close,
-}) => {
+const NewClass: React.FC<{
+  open: boolean;
+  close: () => void;
+  refetch: () => void;
+}> = ({ open, close, refetch }) => {
   const queryClient = new QueryClient();
 
   const { data: departments } = useQuery<Department[]>({
@@ -41,13 +37,14 @@ const NewClass: React.FC<{ open: boolean; close: () => void }> = ({
   });
 
   const { mutateAsync: addClass, isPending } = useMutation({
-    mutationFn: coleAPI("/students/update", "PATCH"),
-    onError: () => {
-      toast.error("Failed to update student");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
-      toast.success("Student updated successfully");
+    mutationFn: coleAPI("/classes/add", "POST"),
+
+    onSuccess: async () => {
+      toast.success("Class added successfully");
+      await queryClient.invalidateQueries({
+        queryKey: ["classes"],
+      });
+      refetch();
       close();
     },
   });
@@ -61,7 +58,13 @@ const NewClass: React.FC<{ open: boolean; close: () => void }> = ({
 
   const onSubmit = async (data: ClassData) => {
     const payload = { ...data, departmentId: parseInt(data.departmentId) };
-    console.log(payload);
+    try {
+      await addClass(payload);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Failed to add class.");
+      }
+    }
   };
 
   return (
@@ -84,7 +87,7 @@ const NewClass: React.FC<{ open: boolean; close: () => void }> = ({
               })}
               id="name"
               type="text"
-              placeholder="Enter label"
+              placeholder="e.g. SDP101 TTH"
             />
             {errors.className && (
               <p className="text-sm text-red-500">{errors.className.message}</p>
@@ -143,12 +146,27 @@ const NewClass: React.FC<{ open: boolean; close: () => void }> = ({
               <p className="text-sm text-red-500">{errors.year.message}</p>
             )}
           </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="time">Class Label</Label>
+            <Input
+              {...register("time", {
+                required: "Time is required",
+              })}
+              id="time"
+              type="text"
+              placeholder="e.g. 08:00 AM - 09:30 AM"
+            />
+            {errors.time && (
+              <p className="text-sm text-red-500">{errors.time.message}</p>
+            )}
+          </div>
           <Button
             type="submit"
             disabled={isPending}
             className="w-full mt-3 Nunito-SemiBold"
           >
-            Save Changes
+            Submit
           </Button>
         </form>
       </DialogContent>
