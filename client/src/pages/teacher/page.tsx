@@ -5,9 +5,11 @@ import type { ClassData } from "@/types/class.types";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarRange, Clock } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const TeachersPage: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { data: classes, refetch } = useQuery<ClassData[]>({
     queryKey: ["classes"],
@@ -27,7 +29,11 @@ const TeachersPage: React.FC = () => {
         </div>
         {classes?.length ? (
           classes.map((cls, index) => (
-            <Card className="p-4" key={index}>
+            <Card
+              className="p-4 cursor-pointer"
+              key={index}
+              onClick={() => navigate(`/class/${cls.classId}`)}
+            >
               <div className="flex justify-between">
                 <h2 className="flex gap-2 items-center font-bold">
                   <CalendarRange />

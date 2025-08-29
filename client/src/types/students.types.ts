@@ -13,6 +13,7 @@ export interface Student {
   departmentName: string;
   departmentAcronym: string;
   year: number;
+  photo?: string;
 }
 
 export interface StudentByDepartment {
