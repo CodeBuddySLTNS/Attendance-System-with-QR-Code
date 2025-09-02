@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 // import { Link } from "react-router-dom";
 import { useMainStore } from "../store";
 import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 
 const Header: React.FC = () => {
   // const page = useMainStore((state) => state.page);
@@ -23,7 +24,8 @@ const Header: React.FC = () => {
           <div className="w-8 h-8">
             <img src="/images/paclogo.png" />
           </div>
-          <span>QR Code Attendance System</span>
+          <span>QR Code Attendance</span>{" "}
+          <span className="hidden sm:inline-block">System</span>
         </div>
 
         {/* <div
@@ -57,7 +59,8 @@ const Header: React.FC = () => {
 
         <div>
           <Button variant="secondary" size="sm" onClick={handleLogout}>
-            Logout
+            <span className="hidden sm:inline-block">Logout</span>
+            <LogOut size={18} />
           </Button>
         </div>
       </div>
