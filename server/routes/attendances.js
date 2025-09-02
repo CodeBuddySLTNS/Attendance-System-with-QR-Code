@@ -6,6 +6,7 @@ const router = Router();
 
 router.get("/", tryCatch(handler.attendances));
 router.post("/add", tryCatch(handler.addAttendance));
+router.post("/add-class", tryCatch(handler.addClassAttendance));
 router.delete("/delete", tryCatch(handler.deleteAttendance));
 
 export default router;

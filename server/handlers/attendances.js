@@ -29,8 +29,25 @@ const deleteAttendance = async (req, res) => {
   res.send(result);
 };
 
+const addClassAttendance = async (req, res) => {
+  const { classId, userId, type, dateTime, date } = req.body || {};
+
+  if (!classId || !userId || !type || !dateTime || !date)
+    throw new CustomError("Missing required fields", status.BAD_REQUEST);
+
+  const result = await Attendance.addClassAttendance(
+    classId,
+    userId,
+    type,
+    dateTime,
+    date
+  );
+  res.send(result);
+};
+
 export default {
   attendances,
   addAttendance,
   deleteAttendance,
+  addClassAttendance,
 };

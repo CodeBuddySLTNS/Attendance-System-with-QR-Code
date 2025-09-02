@@ -30,4 +30,11 @@ export const Attendance = {
       [userId, dateTime]
     );
   },
+
+  addClassAttendance: async (classId, userId, type, dateTime, date) => {
+    return await sqlQuery(
+      `INSERT INTO attendances (classId, userId, type, dateTime, date) VALUES (?, ?, ?, ?, ?)`,
+      [classId, userId, type, dateTime, date]
+    );
+  },
 };
