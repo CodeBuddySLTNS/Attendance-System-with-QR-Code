@@ -14,6 +14,8 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Eye, EyeClosed } from "lucide-react";
 
 interface LoginData {
   name: string;
@@ -27,6 +29,7 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const { register, handleSubmit, reset } = useForm<LoginData>();
   const navigate = useNavigate();
+  const [showPassword, setShowpassword] = useState(false);
 
   const { mutateAsync: login, isPending } = useMutation({
     mutationFn: coleAPI("/auth/signup", "POST"),
@@ -57,7 +60,7 @@ export function SignupForm({
   return (
     <div
       className={cn(
-        "min-w-[310px] sm:min-w-[350px] flex flex-col gap-6",
+        "min-w-[250px] sm:min-w-[350px] flex flex-col gap-6",
         className
       )}
       {...props}
@@ -90,12 +93,27 @@ export function SignupForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    {...register("password")}
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                  />
+                  {showPassword ? (
+                    <EyeClosed
+                      size={20}
+                      onClick={() => setShowpassword(false)}
+                      className="absolute top-1/2 right-2 text-gray-500 transform -translate-y-1/2"
+                    />
+                  ) : (
+                    <Eye
+                      size={20}
+                      onClick={() => setShowpassword(true)}
+                      className="absolute top-1/2 right-2 text-gray-500 transform -translate-y-1/2"
+                    />
+                  )}
+                </div>
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
