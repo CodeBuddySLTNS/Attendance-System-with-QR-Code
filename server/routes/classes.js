@@ -18,6 +18,7 @@ router.get(
 );
 router.get("/:classId/attendance", tryCatch(handler.attendanceByDate));
 router.get("/:classId/attendance/all", tryCatch(handler.attendanceAll));
+router.get("/:classId/attendance/matrix", tryCatch(handler.attendanceMatrix));
 router.post("/add", tryCatch(handler.addClass));
 
 export default router;

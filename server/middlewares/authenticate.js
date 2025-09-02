@@ -24,16 +24,16 @@ const authenticate = async (req, res, next) => {
           if (err) {
             return res
               .status(status.FORBIDDEN)
-              .json({ message: "Invalid token" });
+              .json({ message: "Access Denied!" });
           }
           res.locals.userId = verifiedToken.userId;
           next();
         });
       } else {
-        return res.status(status.FORBIDDEN).json({ message: "Invalid token" });
+        return res.status(status.FORBIDDEN).json({ message: "Access Denied!" });
       }
     } else {
-      return res.status(status.FORBIDDEN).json({ message: "Invalid token" });
+      return res.status(status.FORBIDDEN).json({ message: "Access Denied!" });
     }
   } catch (e) {
     throw new Error(e);

@@ -94,6 +94,7 @@ const validateStudentInClass = async (req, res) => {
     parseInt(classId),
     parseInt(userId)
   );
+
   if (!student)
     throw new CustomError(status.NOT_FOUND, "Student not in this class");
 
@@ -127,6 +128,18 @@ const attendanceAll = async (req, res) => {
   res.send(list);
 };
 
+const attendanceMatrix = async (req, res) => {
+  const { classId } = req.params;
+  if (!classId)
+    throw new CustomError(status.BAD_REQUEST, "classId is required");
+
+  const cls = await Class.getById(parseInt(classId), res.locals.userId);
+  if (!cls) throw new CustomError(status.NOT_FOUND, "Class not found");
+
+  const list = await Class.getAttendanceMatrix(parseInt(classId));
+  res.send(list);
+};
+
 export default {
   classes,
   addClass,
@@ -137,4 +150,5 @@ export default {
   validateStudentInClass,
   attendanceByDate,
   attendanceAll,
+  attendanceMatrix,
 };

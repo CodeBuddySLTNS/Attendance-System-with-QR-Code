@@ -97,6 +97,30 @@ export const Class = {
       [classId]
     );
   },
+
+  getAttendanceMatrix: async (classId) => {
+    // Return all students in class with their attendance records for matrix view
+    return await sqlQuery(
+      `SELECT 
+        u.userId,
+        u.name,
+        u.photo,
+        d.acronym AS departmentAcronym,
+        u.year,
+        a.date,
+        a.dateTime,
+        CASE WHEN a.userId IS NOT NULL THEN 1 ELSE 0 END AS present
+      FROM class_students cs
+      JOIN users u ON cs.userId = u.userId
+      JOIN departments d ON u.departmentId = d.departmentId
+      LEFT JOIN attendances a 
+        ON a.classId = cs.classId 
+        AND a.userId = cs.userId
+      WHERE cs.classId = ?
+      ORDER BY u.name ASC, a.date ASC`,
+      [classId]
+    );
+  },
   add: async ({ teacherId, className, departmentId, year, time }) => {
     return await sqlQuery(
       `INSERT INTO classes(teacherId, className, departmentId, year, time)
