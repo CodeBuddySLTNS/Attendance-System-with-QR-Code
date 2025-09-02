@@ -47,3 +47,12 @@ export interface User {
   year?: number;
   studentId?: number | null;
 }
+
+export interface StudentAttendance {
+  userId: number;
+  name: string;
+  photo?: string;
+  departmentAcronym: string;
+  year: number;
+  attendanceByDate: Record<string, "present" | "absent">;
+}
