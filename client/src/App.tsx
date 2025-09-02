@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import AttendanceRecords from "./pages/attendance-records";
 import Layout from "./layout";
 import StudentsPage from "./pages/students-page";
 import { Toaster } from "./components/ui/toaster";
@@ -47,7 +46,6 @@ const App: React.FC = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/class/:classId" element={<ViewClass />} />
         <Route path="/students" element={<StudentsPage />} />
-        <Route path="/attendance-records" element={<AttendanceRecords />} />
       </Routes>
       <Toaster position="top-center" richColors />
     </Layout>
