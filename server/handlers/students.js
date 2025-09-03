@@ -33,13 +33,22 @@ const addStudent = async (req, res) => {
 };
 
 const editStudent = async (req, res) => {
-  const { studentId, name, departmentId, year } = req.body || {};
+  const { userId, studentId, name, departmentId, year } = req.body || {};
 
-  if (!studentId || !name || !departmentId || !year) {
+  if (!userId || !name || !departmentId || !year) {
     throw new CustomError("All fields are required", status.BAD_REQUEST);
   }
 
-  const result = await Student.update(req.body);
+  const payload = {
+    userId: Number(userId),
+    studentId: studentId ? Number(studentId) : null,
+    name,
+    departmentId: Number(departmentId),
+    year: Number(year),
+    ...(req.file && { photo: `/uploads/${req.file.filename}` }),
+  };
+
+  const result = await Student.update(payload);
   res.status(status.CREATED).send(result);
 };
 

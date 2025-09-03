@@ -4,7 +4,7 @@ export const Student = {
   getAll: async () => {
     return await sqlQuery(`
       SELECT 
-        u.userId, u.studentId, u.name, d.departmentName, d.acronym AS departmentAcronym, u.year
+        u.userId, u.studentId, u.name, d.departmentName, d.acronym AS departmentAcronym, u.year, u.photo
       FROM users u 
       JOIN departments d 
         ON u.departmentId = d.departmentId
@@ -26,15 +26,26 @@ export const Student = {
   },
 
   update: async (student) => {
-    const query = `
-      UPDATE users SET studentId = ?, name = ?, departmentId = ?, year = ? WHERE userId = ?`;
-    const params = [
-      student.studentId,
-      student.name,
-      student.departmentId,
-      student.year,
-      student.userId,
-    ];
+    const hasPhoto = Boolean(student.photo);
+    const query = hasPhoto
+      ? `UPDATE users SET studentId = ?, name = ?, departmentId = ?, year = ?, photo = ? WHERE userId = ?`
+      : `UPDATE users SET studentId = ?, name = ?, departmentId = ?, year = ? WHERE userId = ?`;
+    const params = hasPhoto
+      ? [
+          student.studentId,
+          student.name,
+          student.departmentId,
+          student.year,
+          student.photo,
+          student.userId,
+        ]
+      : [
+          student.studentId,
+          student.name,
+          student.departmentId,
+          student.year,
+          student.userId,
+        ];
     return await sqlQuery(query, params);
   },
 
