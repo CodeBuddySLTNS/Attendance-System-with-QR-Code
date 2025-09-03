@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
-
+import config from "../../system.config.json";
 interface ClassAttendanceRecord {
   userId: number;
   name: string;
@@ -41,9 +41,15 @@ export const dailyAttendanceColumns: ColumnDef<ClassAttendanceRecord>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+        <div className="w-8 h-8 border rounded-full overflow-hidden bg-gray-100">
           <img
-            src={row.original.photo || "/images/default-icon.png"}
+            src={
+              row.original?.photo
+                ? `${
+                    config.isProduction ? config.prodServer : config.devServer
+                  }${row.original.photo}`
+                : "/images/default-icon.png"
+            }
             alt=""
             className="w-full h-full object-cover"
           />

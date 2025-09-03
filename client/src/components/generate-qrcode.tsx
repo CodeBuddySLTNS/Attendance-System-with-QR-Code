@@ -20,7 +20,6 @@ const GenerateQrCode: FC<{
   const studentData = JSON.stringify({
     userId: student.userId,
     name: student.name,
-    courseAndYear: `${student.departmentAcronym} ${student.year}`,
   });
 
   const handleDownload = async (): Promise<void> => {

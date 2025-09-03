@@ -1,6 +1,6 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, QrCode, Trash2 } from "lucide-react";
-
+import config from "../../system.config.json";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Student } from "@/types/students.types";
@@ -45,7 +45,26 @@ export const studentColumns = (
         </Button>
       );
     },
-    cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 border rounded-full overflow-hidden bg-gray-100">
+          <img
+            src={
+              row.original?.photo
+                ? `${
+                    config.isProduction ? config.prodServer : config.devServer
+                  }${row.original.photo}`
+                : "/images/default-icon.png"
+            }
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div>
+          <div className="font-medium">{row.getValue("name")}</div>
+        </div>
+      </div>
+    ),
   },
   {
     accessorKey: "departmentAcronym",

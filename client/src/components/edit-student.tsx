@@ -6,10 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Department, InputData } from "./add-student";
 import { coleAPI } from "@/lib/utils";
+import Axios from "axios";
+import config from "../../system.config.json";
 import { toast } from "sonner";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { Input } from "./ui/input";
@@ -22,6 +24,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
+import { Edit } from "lucide-react";
 
 const EditStudent: React.FC<{
   isOpen: boolean;
@@ -29,20 +32,34 @@ const EditStudent: React.FC<{
   student: Student;
 }> = ({ isOpen, close, student }) => {
   const queryClient = useQueryClient();
-
+  const [photo, setPhoto] = useState<string | null>(student.photo || null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const { data: departments } = useQuery<Department[]>({
     queryKey: ["departments"],
     queryFn: coleAPI("/departments"),
   });
 
   const { mutateAsync: updateStudent, isPending } = useMutation({
-    mutationFn: coleAPI("/students/update", "PATCH"),
+    mutationFn: async (formData: FormData) => {
+      const token = localStorage.getItem("token");
+      const instance = Axios.create({
+        baseURL: config.isProduction ? config.prodServer : config.devServer,
+      });
+      const resp = await instance.patch("/students/update", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return resp.data;
+    },
     onError: () => {
       toast.error("Failed to update student");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
       toast.success("Student updated successfully");
+      setPhoto(null);
       close();
     },
   });
@@ -78,14 +95,28 @@ const EditStudent: React.FC<{
   }, [student, departments, reset]);
 
   const onSubmit: SubmitHandler<InputData> = async (data) => {
-    const studentData = {
-      userId: student.userId,
-      studentId: data.studentId || null,
-      name: data.name,
-      departmentId: parseInt(data.departmentId),
-      year: data.year,
-    };
-    await updateStudent(studentData);
+    const form = new FormData();
+    form.append("userId", String(student.userId));
+    if (data.studentId) form.append("studentId", String(data.studentId));
+    form.append("name", data.name);
+    form.append("departmentId", String(parseInt(data.departmentId)));
+    form.append("year", String(data.year));
+    if (photoFile) {
+      form.append("photo", photoFile);
+    }
+    await updateStudent(form);
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -103,13 +134,51 @@ const EditStudent: React.FC<{
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="studentId">Student ID</Label>
-              <Input
-                {...register("studentId")}
-                type="number"
-                placeholder="Enter student ID (optional)"
-              />
+            <div className="grid [grid-template-columns:1fr_auto] gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="studentId">Student ID</Label>
+                <Input
+                  {...register("studentId")}
+                  type="number"
+                  placeholder="Enter student ID (optional)"
+                />
+              </div>
+
+              <div
+                className="relative"
+                onClick={() => {
+                  const input = document.getElementById("photo");
+                  if (input) {
+                    input.click();
+                  }
+                }}
+              >
+                <img
+                  src={
+                    photo
+                      ? photo
+                      : student.photo
+                      ? `${
+                          config.isProduction
+                            ? config.prodServer
+                            : config.devServer
+                        }${student.photo}`
+                      : "/images/default-icon.png"
+                  }
+                  alt="Student Photo"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-400 shadow"
+                />
+                <Edit
+                  size={22}
+                  className="absolute bottom-0 right-0 bg-gray-200 rounded p-[2px]"
+                />
+                <input
+                  id="photo"
+                  className="hidden"
+                  type="file"
+                  onChange={handlePhotoChange}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-1.5">

@@ -5,6 +5,7 @@ import type {
   ClassAttendanceRecord,
   ClassData,
 } from "@/types/class.types";
+import config from "../../../system.config.json";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
@@ -226,7 +227,15 @@ const ViewClass: React.FC = () => {
             <div className="flex-1 flex flex-col justify-center items-center order-1 sm:order-2 bg-gray-100 p-6 rounded-lg shadow-sm transition hover:shadow-md">
               <div className="w-56 h-56 bg-white rounded-full overflow-hidden mb-4 shadow-md flex items-center justify-center border-2 border-gray-300">
                 <img
-                  src={validatedStudent?.photo || "/images/default-icon.png"}
+                  src={
+                    validatedStudent?.photo
+                      ? `${
+                          config.isProduction
+                            ? config.prodServer
+                            : config.devServer
+                        }${validatedStudent.photo}`
+                      : "/images/default-icon.png"
+                  }
                   alt=""
                 />
               </div>
@@ -327,9 +336,17 @@ const ViewClass: React.FC = () => {
                                 );
                               }}
                             />
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+                            <div className="w-8 h-8 border rounded-full overflow-hidden bg-gray-100">
                               <img
-                                src={s.photo || "/images/default-icon.png"}
+                                src={
+                                  s?.photo
+                                    ? `${
+                                        config.isProduction
+                                          ? config.prodServer
+                                          : config.devServer
+                                      }${s.photo}`
+                                    : "/images/default-icon.png"
+                                }
                               />
                             </div>
                             <div className="flex-1">
@@ -366,8 +383,18 @@ const ViewClass: React.FC = () => {
                       key={s.userId}
                       className="flex items-center gap-3 p-3 border rounded-md"
                     >
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
-                        <img src={s.photo || "/images/default-icon.png"} />
+                      <div className="w-12 h-12 rounded-full border overflow-hidden bg-gray-100">
+                        <img
+                          src={
+                            s?.photo
+                              ? `${
+                                  config.isProduction
+                                    ? config.prodServer
+                                    : config.devServer
+                                }${s.photo}`
+                              : "/images/default-icon.png"
+                          }
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="font-semibold">{s.name}</div>

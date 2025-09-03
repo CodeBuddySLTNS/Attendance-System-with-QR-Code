@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import type { StudentAttendance } from "@/types/students.types";
+import config from "../../system.config.json";
 
 export const createAttendanceMatrixColumns = (
   sortedDates: string[],
@@ -36,9 +37,15 @@ export const createAttendanceMatrixColumns = (
       },
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+          <div className="w-8 h-8 border rounded-full overflow-hidden bg-gray-100">
             <img
-              src={row.original.photo || "/images/default-icon.png"}
+              src={
+                row.original?.photo
+                  ? `${
+                      config.isProduction ? config.prodServer : config.devServer
+                    }${row.original.photo}`
+                  : "/images/default-icon.png"
+              }
               alt=""
               className="w-full h-full object-cover"
             />
