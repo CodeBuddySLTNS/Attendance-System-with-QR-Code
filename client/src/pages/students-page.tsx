@@ -9,6 +9,7 @@ import { useState } from "react";
 import EditStudent from "@/components/edit-student";
 import DeleteStudent from "@/components/delete-student";
 import BgImageLayer from "@/components/bg-image-layer";
+import UploadStudentsExcel from "@/components/upload-students-excel";
 
 interface OpenState {
   qrCode: { status: boolean; student: Student };
@@ -23,7 +24,7 @@ export default function StudentsPage() {
     delete: { status: false, student: {} as Student },
   });
 
-  const { data } = useQuery<Student[]>({
+  const { data, refetch } = useQuery<Student[]>({
     queryKey: ["students"],
     queryFn: coleAPI("/students"),
   });
@@ -46,7 +47,10 @@ export default function StudentsPage() {
       <div className="w-full h-full relative z-[1]">
         <div className="flex justify-between">
           <h1 className="text-2xl font-semibold">List of Students</h1>
-          <AddStudent />
+          <div className="flex items-center gap-2">
+            <UploadStudentsExcel onDone={() => refetch()} />
+            <AddStudent />
+          </div>
         </div>
 
         <DataTable<Student>
