@@ -1,5 +1,5 @@
 {
   "isProduction": true,
-  "prodServer": "http://10.102.9.169:5000",
-  "devServer": "http://localhost:5000"
+  "prodServer": "https://10.102.9.169:5000",
+  "devServer": "https://localhost:5000"
 }
