@@ -13,7 +13,7 @@ export const sqlTableQueries = `
     CREATE TABLE users (
         userId INT PRIMARY KEY AUTO_INCREMENT,
         studentId INT,
-        name VARCHAR(100) NOT NULL,
+        name VARCHAR(100) NOT NULL UNIQUE,
         username VARCHAR(100),
         departmentId INT,
         year TINYINT NOT NULL CHECK (year BETWEEN 1 AND 4),
