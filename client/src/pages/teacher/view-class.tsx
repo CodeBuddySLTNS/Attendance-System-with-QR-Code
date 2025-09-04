@@ -8,8 +8,19 @@ import type {
 import config from "../../../system.config.json";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Scanner, type IDetectedBarcode } from "@yudiel/react-qr-scanner";
-import { QrCode, Users, CheckSquare, ArrowRight } from "lucide-react";
+import {
+  Scanner,
+  type IDetectedBarcode,
+  useDevices,
+} from "@yudiel/react-qr-scanner";
+import {
+  QrCode,
+  Users,
+  CheckSquare,
+  ArrowRight,
+  CameraOff,
+  Download,
+} from "lucide-react";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +30,10 @@ import { toast } from "sonner";
 import AttendanceMatrix from "@/components/attendance-matrix";
 import DataTable from "@/components/data-table";
 import { dailyAttendanceColumns } from "@/columns/daily-attendance.columns";
+import {
+  exportDailyAttendance,
+  exportAttendanceMatrix,
+} from "@/lib/excel-export";
 
 interface TimeData {
   hours: string;
@@ -50,6 +65,57 @@ const ViewClass: React.FC = () => {
   const [validatedStudent, setValidatedStudent] = useState<
     (Student & { photo?: string; departmentAcronym?: string }) | null
   >(null);
+
+  // Camera device management
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(
+    undefined
+  );
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [devicesInitialized, setDevicesInitialized] = useState(false);
+  const devices = useDevices();
+
+  // Memoize constraints to prevent unnecessary re-renders
+  const scannerConstraints = React.useMemo(() => {
+    if (selectedDeviceId) {
+      return { deviceId: { exact: selectedDeviceId } };
+    }
+    return isMobile ? { facingMode: "environment" } : { facingMode: "user" };
+  }, [selectedDeviceId, isMobile]);
+
+  // Debounced device selection handler
+  const handleDeviceChange = React.useCallback(
+    (deviceId: string | undefined) => {
+      setSelectedDeviceId(deviceId);
+      setCameraError(null);
+    },
+    []
+  );
+
+  // Export handlers
+  const handleExportDaily = () => {
+    if (!attendanceByDate || !cls) return;
+
+    try {
+      exportDailyAttendance(attendanceByDate, cls.className, selectedDate);
+      toast.success("Daily attendance exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export daily attendance");
+    }
+  };
+
+  const handleExportMatrix = () => {
+    if (!attendanceMatrix || !cls) return;
+
+    try {
+      exportAttendanceMatrix(attendanceMatrix, cls.className);
+      toast.success("Attendance matrix exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export attendance matrix");
+    }
+  };
 
   const { data: cls, isLoading } = useQuery<ClassData | undefined>({
     queryKey: ["class", classId],
@@ -125,13 +191,29 @@ const ViewClass: React.FC = () => {
 
   const handleScanResult = async (result: IDetectedBarcode[]) => {
     try {
+      setCameraError(null);
+
       const data = JSON.parse(result[0].rawValue);
       if (!data.userId) throw new Error("Invalid Format!");
 
-      const student = await coleAPI(
-        `/classes/${classId}/students/${data.userId}/validate`
-      )({});
-      setValidatedStudent(student);
+      let student: Student | null = null;
+
+      try {
+        student = await coleAPI(
+          `/classes/${classId}/students/${data.userId}/validate`
+        )({});
+      } catch (error) {
+        if (error) {
+          setValidatedStudent(null);
+          return toast.error("Invalid QR code or student not in this class");
+        }
+      }
+
+      if (student) {
+        setValidatedStudent(student);
+      } else {
+        throw new Error("Invalid");
+      }
 
       // Save attendance
       const now = new Date();
@@ -148,9 +230,75 @@ const ViewClass: React.FC = () => {
         date,
       });
     } catch (error) {
-      console.error(error);
+      if (error) return;
     }
   };
+
+  // Device detection and camera setup
+  useEffect(() => {
+    // Detect if device is mobile (only once)
+    if (!devicesInitialized) {
+      const checkMobile = () => {
+        const userAgent =
+          navigator.userAgent ||
+          navigator.vendor ||
+          (window as unknown as { opera?: string }).opera ||
+          "";
+        const isMobileDevice =
+          /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+            userAgent
+          );
+        const isTouchDevice =
+          "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        setIsMobile(isMobileDevice || isTouchDevice);
+      };
+
+      checkMobile();
+      setDevicesInitialized(true);
+    }
+  }, [devicesInitialized]);
+
+  // Auto-select appropriate camera when devices are available (only once)
+  useEffect(() => {
+    if (devices.length > 0 && !selectedDeviceId && devicesInitialized) {
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+
+      if (isMobile) {
+        // On mobile, prefer back camera (environment)
+        const backCamera = videoDevices.find(
+          (device) =>
+            device.label.toLowerCase().includes("back") ||
+            device.label.toLowerCase().includes("rear") ||
+            device.label.toLowerCase().includes("environment")
+        );
+
+        if (backCamera) {
+          setSelectedDeviceId(backCamera.deviceId);
+        } else if (videoDevices.length > 1) {
+          // If no back camera found but multiple cameras, use the last one (usually back on mobile)
+          setSelectedDeviceId(videoDevices[videoDevices.length - 1].deviceId);
+        } else {
+          setSelectedDeviceId(videoDevices[0].deviceId);
+        }
+      } else {
+        // On desktop, prefer front camera (user)
+        const frontCamera = videoDevices.find(
+          (device) =>
+            device.label.toLowerCase().includes("front") ||
+            device.label.toLowerCase().includes("user") ||
+            device.label.toLowerCase().includes("facing")
+        );
+
+        if (frontCamera) {
+          setSelectedDeviceId(frontCamera.deviceId);
+        } else {
+          setSelectedDeviceId(videoDevices[0].deviceId);
+        }
+      }
+    }
+  }, [devices, selectedDeviceId, devicesInitialized, isMobile]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -206,25 +354,66 @@ const ViewClass: React.FC = () => {
           </div>
         </div>
         {mode === "scan" && (
-          <Card className="p-4 grid grid-cols-1 sm:[grid-template-columns:1.1fr_1.9fr] ">
+          <Card className="p-4 grid grid-cols-1 sm:[grid-template-columns:1.1fr_1.9fr] shadow-xl">
             <div className="rounded-md">
               <h2 className="text-center text-2xl rounded py-1.5 font-bold mb-2">
                 Scan QR Code
               </h2>
+
+              {/* Camera Selection */}
+              {devices.length > 1 && (
+                <div className="mb-3">
+                  <select
+                    value={selectedDeviceId || ""}
+                    onChange={(e) =>
+                      handleDeviceChange(e.target.value || undefined)
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                  >
+                    {devices
+                      .filter((device) => device.kind === "videoinput")
+                      .map((device, index) => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {device.label || `Camera ${index + 1}`}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Camera Error Display */}
+              {cameraError && (
+                <div className="mb-3 p-2 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+                  <CameraOff className="inline w-4 h-4 mr-1" />
+                  {cameraError}
+                </div>
+              )}
+
               <div className="">
-                <div className="mx-1 rounded-md overflow-hidden">
-                  <Scanner
-                    onScan={handleScanResult}
-                    sound={true}
-                    classNames={{
-                      video: "scale-x-[-1] w-full object-cover",
-                    }}
-                  />
+                <div className="mx-1 shadow rounded-md overflow-hidden">
+                  {devicesInitialized && (
+                    <Scanner
+                      key={`scanner-${selectedDeviceId || "default"}`}
+                      onScan={handleScanResult}
+                      onError={(error) => {
+                        console.error("Scanner error:", error);
+                        setCameraError(
+                          "Camera access failed. Please check permissions."
+                        );
+                      }}
+                      sound={true}
+                      constraints={scannerConstraints}
+                      classNames={{
+                        video:
+                          "sm:scale-x-[-1] scale-x-100 w-full object-cover",
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col justify-center items-center order-1 sm:order-2 bg-gray-100 p-6 rounded-lg shadow-sm transition hover:shadow-md">
+            <div className="rainbow flex-1 flex flex-col justify-center items-center order-1 sm:order-2 bg-gray-100 p-6 rounded-md shadow-sm transition hover:shadow-md">
               <div className="w-56 h-56 bg-white rounded-full overflow-hidden mb-4 shadow-md flex items-center justify-center border-2 border-gray-300">
                 <img
                   src={
@@ -422,25 +611,52 @@ const ViewClass: React.FC = () => {
 
         {mode === "attendance" && (
           <Card className="p-4 gap-1">
-            <div className="flex flex-col items-center pb-2 sm:flex-row gap-2">
-              <div className="flex items-center gap-2">
-                <label className="text-sm">Date</label>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="border rounded px-2 py-1"
-                  disabled={showAllDays}
-                />
+            <div className="flex flex-col items-center pb-2 sm:flex-row sm:justify-between gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm">Date</label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="border rounded px-2 py-1"
+                    disabled={showAllDays}
+                  />
+                </div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={showAllDays}
+                    onChange={(e) => setShowAllDays(e.target.checked)}
+                  />
+                  Show all days
+                </label>
               </div>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={showAllDays}
-                  onChange={(e) => setShowAllDays(e.target.checked)}
-                />
-                Show all days
-              </label>
+
+              <div className="flex gap-2">
+                {!showAllDays && attendanceByDate?.length ? (
+                  <Button
+                    onClick={handleExportDaily}
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-1"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export Daily
+                  </Button>
+                ) : null}
+                {showAllDays && attendanceMatrix?.length ? (
+                  <Button
+                    onClick={handleExportMatrix}
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-1"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export Matrix
+                  </Button>
+                ) : null}
+              </div>
             </div>
 
             {!showAllDays ? (
