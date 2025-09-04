@@ -17,7 +17,7 @@ const TeachersPage: React.FC = () => {
   });
 
   return (
-    <div className="w-full h-dvh flex flex-col items-center">
+    <div className="w-full h-full flex flex-col items-center">
       <div className="w-[90%] sm:w-[80%] space-y-2.5">
         <div className="mt-6 sm:mt-8 flex justify-between">
           <h1 className="text-2xl Nunito-Bold">My Classes</h1>
