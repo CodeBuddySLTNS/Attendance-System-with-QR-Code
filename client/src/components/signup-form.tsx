@@ -52,7 +52,7 @@ export function SignupForm({
         const axErr = error as AxiosError<Error>;
         if (axErr.response?.data.message)
           return toast.error(axErr.response.data.message);
-        toast.error("Failed to login");
+        toast.error("Unable to connect to the server");
       }
     }
   };
