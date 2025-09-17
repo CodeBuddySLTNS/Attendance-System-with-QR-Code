@@ -52,7 +52,9 @@ export const exportAttendanceMatrix = (
   data: ClassAttendanceMatrix[],
   className: string
 ) => {
-  const uniqueDates = [...new Set(data.map((record) => record.date))].sort();
+  const uniqueDates = [...new Set(data.map((record) => record.date))]
+    .filter((date) => date !== null)
+    .sort();
 
   const uniqueStudents = data.reduce((acc, record) => {
     if (!acc.find((student) => student.userId === record.userId)) {
@@ -76,6 +78,8 @@ export const exportAttendanceMatrix = (
           })
         : ""
     ),
+    "Present",
+    "Absent",
   ];
 
   const excelData = uniqueStudents.map((student, index) => {
@@ -90,13 +94,11 @@ export const exportAttendanceMatrix = (
           (record) => record.userId === student.userId && record.date === date
         );
         row[
-          date
-            ? new Date(date).toLocaleDateString("en-US", {
-                month: "2-digit",
-                day: "2-digit",
-                year: "2-digit",
-              })
-            : ""
+          new Date(date).toLocaleDateString("en-US", {
+            month: "2-digit",
+            day: "2-digit",
+            year: "2-digit",
+          })
         ] = attendanceRecord
           ? attendanceRecord.present === 1
             ? "✓"
@@ -105,18 +107,36 @@ export const exportAttendanceMatrix = (
       }
     });
 
+    row.Present = Object.values(row)
+      .filter((value) => value === "✓")
+      .length.toString();
+
+    row.Absent = (uniqueDates.length - parseInt(row.Present)).toString();
+
     return row;
   });
 
+  const dataForSheet = excelData.map((record) =>
+    headers.map((header) => record[header])
+  );
+
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(excelData, { header: headers });
+  const ws = XLSX.utils.json_to_sheet([]);
 
   const colWidths = [
     { wch: 5 }, // No.
     { wch: 20 }, // Name
     ...uniqueDates.map(() => ({ wch: 12 })), // Date columns
+    { wch: 10 }, // Present
+    { wch: 10 }, // Absent
   ];
   ws["!cols"] = colWidths;
+
+  XLSX.utils.sheet_add_aoa(ws, [["", `Total Days: ${uniqueDates.length}`]], {
+    origin: "A1",
+  });
+  XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A2" });
+  XLSX.utils.sheet_add_aoa(ws, dataForSheet, { origin: "A3" });
 
   XLSX.utils.book_append_sheet(wb, ws, "Attendance Matrix");
 

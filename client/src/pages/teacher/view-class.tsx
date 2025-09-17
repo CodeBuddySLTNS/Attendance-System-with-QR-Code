@@ -103,7 +103,7 @@ const ViewClass: React.FC = () => {
 
   const handleExportMatrix = () => {
     if (!attendanceMatrix || !cls) return;
-    console.log(attendanceMatrix);
+
     try {
       exportAttendanceMatrix(attendanceMatrix, cls.className);
       toast.success("Attendance matrix exported successfully!");
