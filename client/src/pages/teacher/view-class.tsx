@@ -66,7 +66,6 @@ const ViewClass: React.FC = () => {
     (Student & { photo?: string; departmentAcronym?: string }) | null
   >(null);
 
-  // Camera device management
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(
     undefined
   );
@@ -75,7 +74,6 @@ const ViewClass: React.FC = () => {
   const [devicesInitialized, setDevicesInitialized] = useState(false);
   const devices = useDevices();
 
-  // Memoize constraints to prevent unnecessary re-renders
   const scannerConstraints = React.useMemo(() => {
     if (selectedDeviceId) {
       return { deviceId: { exact: selectedDeviceId } };
@@ -83,7 +81,6 @@ const ViewClass: React.FC = () => {
     return isMobile ? { facingMode: "environment" } : { facingMode: "user" };
   }, [selectedDeviceId, isMobile]);
 
-  // Debounced device selection handler
   const handleDeviceChange = React.useCallback(
     (deviceId: string | undefined) => {
       setSelectedDeviceId(deviceId);
@@ -92,7 +89,6 @@ const ViewClass: React.FC = () => {
     []
   );
 
-  // Export handlers
   const handleExportDaily = () => {
     if (!attendanceByDate || !cls) return;
 
@@ -107,7 +103,7 @@ const ViewClass: React.FC = () => {
 
   const handleExportMatrix = () => {
     if (!attendanceMatrix || !cls) return;
-
+    console.log(attendanceMatrix);
     try {
       exportAttendanceMatrix(attendanceMatrix, cls.className);
       toast.success("Attendance matrix exported successfully!");
@@ -169,6 +165,20 @@ const ViewClass: React.FC = () => {
     },
   });
 
+  const { mutateAsync: removeAttendance } = useMutation({
+    mutationFn: async (attendanceId: number | undefined) =>
+      await coleAPI(`/attendances/delete?id=${attendanceId}`, "DELETE")({}),
+    onSuccess: async () => {
+      toast.success("Student attendance removed from class");
+      queryClient.invalidateQueries({
+        queryKey: ["class-attendance-date", classId, selectedDate],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["class-attendance-matrix", classId],
+      });
+    },
+  });
+
   const { mutateAsync: addClassAttendance } = useMutation({
     mutationFn: coleAPI("/attendances/add-class", "POST"),
     onSuccess: () => {
@@ -215,7 +225,7 @@ const ViewClass: React.FC = () => {
         throw new Error("Invalid");
       }
 
-      // Save attendance
+      // save attendance
       const now = new Date();
       const dateTime = now
         .toLocaleString("sv-SE", { timeZone: "Asia/Manila" })
@@ -234,9 +244,14 @@ const ViewClass: React.FC = () => {
     }
   };
 
-  // Device detection and camera setup
+  const totalDays = () => {
+    const days = new Set<string>();
+    attendanceMatrix?.forEach((record) => record.date && days.add(record.date));
+    return days.size;
+  };
+
+  // device detection and camera setup
   useEffect(() => {
-    // Detect if device is mobile (only once)
     if (!devicesInitialized) {
       const checkMobile = () => {
         const userAgent =
@@ -258,7 +273,6 @@ const ViewClass: React.FC = () => {
     }
   }, [devicesInitialized]);
 
-  // Auto-select appropriate camera when devices are available (only once)
   useEffect(() => {
     if (devices.length > 0 && !selectedDeviceId && devicesInitialized) {
       const videoDevices = devices.filter(
@@ -266,7 +280,6 @@ const ViewClass: React.FC = () => {
       );
 
       if (isMobile) {
-        // On mobile, prefer back camera (environment)
         const backCamera = videoDevices.find(
           (device) =>
             device.label.toLowerCase().includes("back") ||
@@ -277,13 +290,12 @@ const ViewClass: React.FC = () => {
         if (backCamera) {
           setSelectedDeviceId(backCamera.deviceId);
         } else if (videoDevices.length > 1) {
-          // If no back camera found but multiple cameras, use the last one (usually back on mobile)
           setSelectedDeviceId(videoDevices[videoDevices.length - 1].deviceId);
         } else {
           setSelectedDeviceId(videoDevices[0].deviceId);
         }
       } else {
-        // On desktop, prefer front camera (user)
+        // desktop front camera
         const frontCamera = videoDevices.find(
           (device) =>
             device.label.toLowerCase().includes("front") ||
@@ -612,7 +624,7 @@ const ViewClass: React.FC = () => {
         {mode === "attendance" && (
           <Card className="p-4 gap-1">
             <div className="flex flex-col items-center pb-2 sm:flex-row sm:justify-between gap-2">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-2">
                   <label className="text-sm">Date</label>
                   <input
@@ -632,6 +644,10 @@ const ViewClass: React.FC = () => {
                   Show all days
                 </label>
               </div>
+
+              {showAllDays && (
+                <div>Total days: {attendanceMatrix ? totalDays() : "0"}</div>
+              )}
 
               <div className="flex gap-2">
                 {!showAllDays && attendanceByDate?.length ? (
@@ -667,7 +683,9 @@ const ViewClass: React.FC = () => {
                 {attendanceByDate?.length && (
                   <DataTable<ClassAttendanceRecord>
                     data={attendanceByDate}
-                    columns={dailyAttendanceColumns}
+                    columns={dailyAttendanceColumns((attendanceId) =>
+                      removeAttendance(attendanceId)
+                    )}
                   />
                 )}
               </div>
