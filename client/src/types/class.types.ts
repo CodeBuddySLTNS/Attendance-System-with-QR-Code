@@ -8,6 +8,7 @@ export interface ClassData {
 }
 
 export interface ClassAttendanceRecord {
+  attendanceId?: number;
   userId: number;
   name: string;
   photo?: string;
@@ -27,4 +28,19 @@ export interface ClassAttendanceMatrix {
   date: string | null;
   dateTime: string | null;
   present: 0 | 1;
+}
+
+export interface ClassAttendanceMatrix {
+  userId: number;
+  name: string;
+  photo?: string;
+  departmentAcronym: string;
+  year: number;
+  date: string | null;
+  dateTime: string | null;
+  present: 0 | 1;
+}
+
+export interface AttendanceMatrixProps {
+  data: ClassAttendanceMatrix[];
 }
