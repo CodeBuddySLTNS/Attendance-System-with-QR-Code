@@ -1,17 +1,7 @@
 import { Button } from "@/components/ui/button";
+import type { ClassAttendanceRecord } from "@/types/class.types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-
-interface ClassAttendanceRecord {
-  userId: number;
-  name: string;
-  photo?: string;
-  departmentAcronym: string;
-  year: number;
-  dateTime: string | null;
-  present: 0 | 1;
-  date?: string;
-}
 
 interface ClassAttendanceAll {
   userId: number;

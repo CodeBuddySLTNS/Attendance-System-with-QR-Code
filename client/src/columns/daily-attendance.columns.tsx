@@ -1,19 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, X } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import config from "../../system.config.json";
-interface ClassAttendanceRecord {
-  userId: number;
-  name: string;
-  photo?: string;
-  departmentAcronym: string;
-  year: number;
-  dateTime: string | null;
-  present: 0 | 1;
-  date?: string;
-}
+import type { ClassAttendanceRecord } from "@/types/class.types";
 
-export const dailyAttendanceColumns: ColumnDef<ClassAttendanceRecord>[] = [
+export const dailyAttendanceColumns: (
+  deleteFn: (id: number | undefined) => void
+) => ColumnDef<ClassAttendanceRecord>[] = (deleteFn) => [
   {
     accessorKey: "userId",
     header: () => {
@@ -101,5 +94,17 @@ export const dailyAttendanceColumns: ColumnDef<ClassAttendanceRecord>[] = [
         )}
       </div>
     ),
+  },
+  {
+    id: "action",
+    cell: ({ row }) => {
+      return row.getValue("dateTime") ? (
+        <X
+          size={19}
+          className="bg-red-600 rounded p-0.5"
+          onClick={() => deleteFn(row.original?.attendanceId)}
+        />
+      ) : null;
+    },
   },
 ];

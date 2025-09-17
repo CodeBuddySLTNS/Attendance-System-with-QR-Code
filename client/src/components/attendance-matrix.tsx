@@ -1,39 +1,16 @@
 import React, { useState } from "react";
 import DataTable from "@/components/data-table";
 import { createAttendanceMatrixColumns } from "@/columns/attendance-matrix.columns";
-
-interface ClassAttendanceMatrix {
-  userId: number;
-  name: string;
-  photo?: string;
-  departmentAcronym: string;
-  year: number;
-  date: string | null;
-  dateTime: string | null;
-  present: 0 | 1;
-}
-
-interface AttendanceMatrixProps {
-  data: ClassAttendanceMatrix[];
-}
-
-interface StudentAttendance {
-  userId: number;
-  name: string;
-  photo?: string;
-  departmentAcronym: string;
-  year: number;
-  attendanceByDate: Record<string, "present" | "absent">;
-}
+import type { AttendanceMatrixProps } from "@/types/class.types";
+import type { StudentAttendance } from "@/types/students.types";
 
 const AttendanceMatrix: React.FC<AttendanceMatrixProps> = ({ data }) => {
   const [sortBy, setSortBy] = useState<"name" | "userId">("name");
 
-  // Group data by student and create attendance matrix
+  // group by student
   const studentAttendanceMap = new Map<number, StudentAttendance>();
   const allDates = new Set<string>();
 
-  // Process the data to group by student and collect all dates
   data.forEach((record) => {
     if (record.date) {
       allDates.add(record.date);
@@ -56,7 +33,6 @@ const AttendanceMatrix: React.FC<AttendanceMatrixProps> = ({ data }) => {
     }
   });
 
-  // Convert to array and sort
   const students = Array.from(studentAttendanceMap.values()).sort((a, b) => {
     if (sortBy === "name") {
       return a.name.localeCompare(b.name);
@@ -64,12 +40,10 @@ const AttendanceMatrix: React.FC<AttendanceMatrixProps> = ({ data }) => {
     return a.userId - b.userId;
   });
 
-  // Sort dates
   const sortedDates = Array.from(allDates).sort(
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
-  // Create columns using the new function
   const columns = createAttendanceMatrixColumns(sortedDates, sortBy, setSortBy);
 
   return (

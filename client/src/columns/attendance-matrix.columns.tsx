@@ -58,7 +58,7 @@ export const createAttendanceMatrixColumns = (
     },
   ];
 
-  // Add date columns
+  // add date columns
   sortedDates.forEach((date) => {
     const dateObj = new Date(date);
     const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
@@ -67,7 +67,7 @@ export const createAttendanceMatrixColumns = (
     const headerText = `${month}/${day}/${year.split("").slice(-2).join("")}`;
 
     columns.push({
-      accessorKey: `attendance_${date}`,
+      id: `attendance_${date}`,
       header: () => <div className="text-center">{headerText}</div>,
       cell: ({ row }) => {
         const attendance = row.original.attendanceByDate[date];
@@ -86,6 +86,36 @@ export const createAttendanceMatrixColumns = (
         );
       },
     });
+  });
+
+  // add total present column
+  columns.push({
+    accessorKey: "totalPresent",
+    header: () => (
+      <div className="w-full text-center text-green-800">Present</div>
+    ),
+    cell: ({ row }) => {
+      const totalPresent = Object.values(row.original.attendanceByDate).filter(
+        (status) => status === "present"
+      ).length;
+      return <div className="text-center font-medium">{totalPresent}</div>;
+    },
+  });
+
+  //add total absent column
+  columns.push({
+    accessorKey: "totalAbsent",
+    header: () => <div className="w-full text-center text-red-600">Absent</div>,
+    cell: ({ row }) => {
+      const totalPresent = Object.values(row.original.attendanceByDate).filter(
+        (status) => status === "present"
+      ).length;
+      return (
+        <div className="text-center font-medium">
+          {sortedDates.length - totalPresent}
+        </div>
+      );
+    },
   });
 
   return columns;
