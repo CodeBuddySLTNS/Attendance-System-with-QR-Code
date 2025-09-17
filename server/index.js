@@ -22,7 +22,7 @@ const options = {
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-// app.use((req, res, next) => (console.log(req.path, req.method), next()));
+app.use((req, res, next) => (console.log(req.path, req.method), next()));
 app.use(authenticate);
 
 app.use("/auth", auth);

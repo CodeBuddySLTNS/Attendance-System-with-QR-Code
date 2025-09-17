@@ -19,13 +19,11 @@ const addAttendance = async (req, res) => {
 };
 
 const deleteAttendance = async (req, res) => {
-  const { userId, date } = req.body || {};
-  console.log(req.body);
+  const { id } = req.query || {};
 
-  if (!userId || !date)
-    throw new CustomError("Missing required fields", status.BAD_REQUEST);
+  if (!id) throw new CustomError("Missing required fields", status.BAD_REQUEST);
 
-  const result = await Attendance.deleteByUserIdDate(userId, date);
+  const result = await Attendance.deleteById(id);
   res.send(result);
 };
 

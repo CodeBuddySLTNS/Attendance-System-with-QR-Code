@@ -56,9 +56,9 @@ export const Class = {
     );
   },
   getAttendanceByDate: async (classId, date) => {
-    // Return all students in class with present flag and time for given date
     return await sqlQuery(
       `SELECT 
+        a.attendanceId,
         u.userId,
         u.name,
         u.photo,
@@ -79,7 +79,6 @@ export const Class = {
     );
   },
   getAttendanceAll: async (classId) => {
-    // Return all attendance records for the class
     return await sqlQuery(
       `SELECT 
         a.userId,
@@ -99,7 +98,6 @@ export const Class = {
   },
 
   getAttendanceMatrix: async (classId) => {
-    // Return all students in class with their attendance records for matrix view
     return await sqlQuery(
       `SELECT 
         u.userId,
