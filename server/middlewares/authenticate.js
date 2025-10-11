@@ -6,13 +6,16 @@ const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     const secretKey = process.env.SYSTEM_SECRET_KEY;
     const whiteList = [
-      "/attendances",
-      "/attendances/add",
-      "/auth/login",
-      "/auth/signup",
+      "/api/attendances",
+      "/api/attendances/add",
+      "/api/auth/login",
+      "/api/auth/signup",
     ];
 
-    if (whiteList.includes(req.path)) {
+    if (
+      whiteList.includes(req.path) ||
+      (!whiteList.includes(req.path) && !req.path.includes("/api"))
+    ) {
       return next();
     }
 
