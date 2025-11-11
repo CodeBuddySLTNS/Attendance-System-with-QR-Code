@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 const axiosInstance = Axios.create({
-  baseURL: config.isProduction ? config.prodServer : config.devServer,
+  baseURL: config.isProduction ? config.prodServer + "/api" : config.devServer,
 });
 
 export const coleAPI =

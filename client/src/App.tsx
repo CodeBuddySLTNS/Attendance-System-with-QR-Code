@@ -10,6 +10,7 @@ import Login from "./pages/auth/login";
 import LandingPage from "./pages/landing-page";
 import Signup from "./pages/auth/signup";
 import ViewClass from "./pages/teacher/view-class";
+import { Loader } from "lucide-react";
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +38,13 @@ const App: React.FC = () => {
         if (user) navigate("/");
     }
   }, [location.pathname, user, navigate]);
+
+  if (isLoading)
+    return (
+      <div className="w-full h-dvh flex justify-center items-center">
+        <Loader size={70} className="animate-spin" />
+      </div>
+    );
 
   return (
     <Layout>
