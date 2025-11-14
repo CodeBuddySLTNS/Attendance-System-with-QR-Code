@@ -1,0 +1,49 @@
+USER GUIDE
+
+The Attendance System with QR Code centralizes student records, class creation, QR credentials, and attendance tracking. Follow the steps below to operate the platform from account setup to exporting attendance reports.
+
+STEP 1 – ACCESS THE SYSTEM
+    1. Open a Chromium-based browser (Chrome, Edge, Brave) for the most reliable QR scanner support.
+    2. Navigate to http://localhost:5000 to operate locally. If accessing online, a new URL will be given after successfully deployed.
+    3. Choose “Sign Up” to create a teacher account, or “Login” if your credentials already exist.
+
+STEP 2 – MANAGE STUDENTS (ADMIN)
+    1. After logging in as an admin, go to “Students”.
+    2. Click “Add Student” to encode a learner manually. Student ID is optional, but department and year are required.
+    3. Use “Upload Excel” when importing multiple entries. The spreadsheet must contain the columns Name, Department, and Year.
+    4. From the student list you can:
+        ◦ Select “Generate QR” to open a dialog with the downloadable QR code.
+        ◦ Select “Edit” to update IDs, department, year, or upload a profile photo.
+        ◦ Select “Delete” to remove the student permanently.
+
+STEP 3 – CREATE CLASSES (TEACHER)
+    1. Teachers land on the “My Classes” page after logging in.
+    2. Click “New Class”, enter the class label (example: BSIT 3A), pick the department, year level, and meeting time.
+    3. Save the dialog. The card appears instantly and click the class to open its workspace.
+
+STEP 4 – ADD STUDENTS TO A CLASS
+    1. Inside a class, open the “Students” tab.
+    2. Click “Add Student” to search the global list. Filter by name or student number, then select one or more entries.
+    3. Click “Add Selected” to enroll them in the class.
+    4. Use “Remove” beside any listed student to detach them if needed.
+
+STEP 5 – RECORD ATTENDANCE WITH QR
+    1. Switch to the “Scan” tab.
+    2. If multiple cameras are available, pick one from the dropdown. Mobile devices automatically choose the rear camera.
+    3. Hold the learner’s QR (downloaded earlier or printed on an ID) in front of the camera.
+    4. A successful scan shows the student photo and name on the right panel and logs an “IN” record.
+
+STEP 6 – REVIEW AND EXPORT ATTENDANCE
+    1. Go to the “Attendance” tab.
+    2. Select a specific date to show the daily table. Use the trash icon to remove an incorrect entry.
+    3. Enable “Show all days” to view the attendance matrix (students versus dates).
+    4. Click “Export Daily” to download the selected date or “Export Matrix” for the entire grid.
+
+STEP 7 – SIGN OUT
+    1. Click the logout button in the top-right corner.
+
+
+QUICK TIPS
+    • If the camera is blocked, allow access in the browser address bar and refresh.
+    • Red toast errors usually mean the QR belongs to a student who is not enrolled in the open class. Add them first in the Students tab.
+    • Dialogs such as Add Student close only after a successful API response. If the dialog stays open, fix the validation errors shown in red or just click the x-mark close button.
