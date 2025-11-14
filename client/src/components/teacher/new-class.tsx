@@ -148,7 +148,7 @@ const NewClass: React.FC<{
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="time">Class Label</Label>
+            <Label htmlFor="time">Time</Label>
             <Input
               {...register("time", {
                 required: "Time is required",
