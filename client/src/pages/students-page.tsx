@@ -63,15 +63,19 @@ export default function StudentsPage() {
   }, [filter, queryClient]);
 
   return (
-    <div className="p-10 pt-8">
+    <div className="p-4 sm:p-6 md:p-10 pt-4 sm:pt-6 md:pt-8">
       <BgImageLayer />
       <div className="w-full h-full relative z-[1]">
-        <div className="flex justify-between">
-          <h1 className="text-2xl font-semibold">List of Students</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-2">
+          <h1 className="text-xl sm:text-2xl font-semibold Nunito-SemiBold">
+            List of Students
+          </h1>
 
-          <div className="flex gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center sm:justify-center">
             <div className="flex gap-1 items-center">
-              <p>Department:</p>
+              <p className="text-xs sm:text-sm whitespace-nowrap">
+                Department:
+              </p>
               <Select
                 defaultValue="all"
                 onValueChange={(value) =>
@@ -81,15 +85,18 @@ export default function StudentsPage() {
                   }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-[120px] sm:w-auto h-9 sm:h-8 touch-manipulation text-xs sm:text-sm">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
+                <SelectContent className="bg-white/95 backdrop-blur-md border-2">
+                  <SelectItem value="all" className="Nunito-Medium">
+                    All
+                  </SelectItem>
                   {departments?.map((department) => (
                     <SelectItem
                       key={department.departmentId}
                       value={department.departmentId.toString()}
+                      className="Nunito-Medium"
                     >
                       {department.acronym}
                     </SelectItem>
@@ -99,7 +106,7 @@ export default function StudentsPage() {
             </div>
 
             <div className="flex gap-1 items-center">
-              <p>Year:</p>
+              <p className="text-xs sm:text-sm whitespace-nowrap">Year:</p>
               <Select
                 defaultValue="all"
                 onValueChange={(value) =>
@@ -109,21 +116,31 @@ export default function StudentsPage() {
                   }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-[120px] sm:w-auto h-9 sm:h-8 touch-manipulation text-xs sm:text-sm">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="1">1st Year</SelectItem>
-                  <SelectItem value="2">2nd Year</SelectItem>
-                  <SelectItem value="3">3rd Year</SelectItem>
-                  <SelectItem value="4">4th Year</SelectItem>
+                <SelectContent className="bg-white/95 backdrop-blur-md border-2">
+                  <SelectItem value="all" className="Nunito-Medium">
+                    All
+                  </SelectItem>
+                  <SelectItem value="1" className="Nunito-Medium">
+                    1st Year
+                  </SelectItem>
+                  <SelectItem value="2" className="Nunito-Medium">
+                    2nd Year
+                  </SelectItem>
+                  <SelectItem value="3" className="Nunito-Medium">
+                    3rd Year
+                  </SelectItem>
+                  <SelectItem value="4" className="Nunito-Medium">
+                    4th Year
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-end">
             <TemplateDownloader />
             <UploadStudentsExcel onDone={() => refetch()} />
             <AddStudent />

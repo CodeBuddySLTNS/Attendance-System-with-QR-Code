@@ -70,7 +70,7 @@ export default function DataTable<T>({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-transparent">
       <div className="flex items-center py-4 gap-3">
         <Input
           placeholder="Filter names..."
@@ -78,7 +78,7 @@ export default function DataTable<T>({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm h-10 border-2 focus:border-primary transition-colors"
+          className="max-w-sm h-10 border-2 focus:border-primary transition-colors bg-white/50 backdrop-blur-sm"
         />
         {toggleColumns && (
           <DropdownMenu>
@@ -115,7 +115,7 @@ export default function DataTable<T>({
           </DropdownMenu>
         )}
       </div>
-      <div className="rounded-xl border-2 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
+      <div className="rounded-xl border-2 shadow-lg bg-[#fff6f65e] overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

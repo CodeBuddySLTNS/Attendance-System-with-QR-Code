@@ -42,7 +42,9 @@ export const createAttendanceMatrixColumns = (
               src={
                 row.original?.photo
                   ? `${
-                      config.isProduction ? config.prodServer : config.devServer
+                      config.isProduction
+                        ? config.prodServer
+                        : new URL(config.devServer).origin
                     }${row.original.photo}`
                   : "/images/default-icon.png"
               }

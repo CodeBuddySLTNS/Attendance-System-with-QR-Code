@@ -18,11 +18,15 @@ const TeachersPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="w-[90%] sm:w-[80%] space-y-4">
+      <div className="w-[90%] sm:w-[80%] space-y-4 pb-20 sm:pb-10">
         <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl Nunito-Bold gradient-text">My Classes</h1>
-            <p className="text-muted-foreground mt-1 Nunito-Medium">Manage your classes and attendance</p>
+            <h1 className="text-3xl sm:text-4xl Nunito-Bold gradient-text">
+              My Classes
+            </h1>
+            <p className="text-muted-foreground mt-1 Nunito-Medium">
+              Manage your classes and attendance
+            </p>
           </div>
           <NewClass
             refetch={refetch}
@@ -50,7 +54,10 @@ const TeachersPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <span className="text-sm Nunito-Medium">{cls.department}{cls.year}</span>
+                    <span className="text-sm Nunito-Medium">
+                      {cls.department}
+                      {cls.year}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 pt-2 border-t">
                     <Clock size={16} className="text-primary" />
@@ -64,7 +71,9 @@ const TeachersPage: React.FC = () => {
           </div>
         ) : (
           <Card className="p-8 mt-4 border-2 border-dashed bg-white/80 backdrop-blur-sm">
-            <p className="text-center text-muted-foreground Nunito-Medium">No classes found. Create your first class to get started.</p>
+            <p className="text-center text-muted-foreground Nunito-Medium">
+              No classes found. Create your first class to get started.
+            </p>
           </Card>
         )}
       </div>

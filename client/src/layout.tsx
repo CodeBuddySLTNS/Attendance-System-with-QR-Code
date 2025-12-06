@@ -32,9 +32,9 @@ const Layout: React.FC<LayoutNode> = ({ children }) => {
   }, [location.pathname, setPage, loggedIn, navigate]);
 
   return (
-    <div className="w-full h-dvh grid grid-cols-1 grid-rows-[max-content_1fr]">
+    <div className="w-full h-dvh flex flex-col">
       <Header />
-      <div className="w-full h-full">{children}</div>
+      <div className="w-full flex-1 overflow-auto pt-[57px]">{children}</div>
     </div>
   );
 };

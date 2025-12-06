@@ -3,6 +3,7 @@ import type { ClassAttendanceRecord } from "@/types/class.types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
+import config from "../../system.config.json";
 interface ClassAttendanceAll {
   userId: number;
   name: string;
@@ -32,7 +33,15 @@ export const classAttendanceByDateColumns: ColumnDef<ClassAttendanceRecord>[] =
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
             <img
-              src={row.original.photo || "/images/default-icon.png"}
+              src={
+                row.original?.photo
+                  ? `${
+                      config.isProduction
+                        ? config.prodServer
+                        : new URL(config.devServer).origin
+                    }${row.original.photo}`
+                  : "/images/default-icon.png"
+              }
               alt=""
             />
           </div>
