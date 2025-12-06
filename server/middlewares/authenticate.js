@@ -10,10 +10,14 @@ const authenticate = async (req, res, next) => {
       "/api/attendances/add",
       "/api/auth/login",
       "/api/auth/signup",
+      "/templates/BSCS-1.xlsx",
     ];
 
+    // Allow static file paths (uploads, templates) and non-API paths
     if (
       whiteList.includes(req.path) ||
+      req.path.startsWith("/uploads/") ||
+      req.path.startsWith("/templates/") ||
       (!whiteList.includes(req.path) && !req.path.includes("/api"))
     ) {
       return next();

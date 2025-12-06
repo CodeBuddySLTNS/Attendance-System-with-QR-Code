@@ -19,46 +19,22 @@ const Header: React.FC = () => {
 
   return (
     loggedIn && (
-      <div className="w-full flex justify-between items-center px-4 py-2.5 z-10 bg-[#0E2148] shadow-2xl">
-        <div className="Nunito-Extra-Bold flex items-center gap-2 text-xl text-white">
-          <div className="w-8 h-8">
-            <img src="/images/paclogo.png" />
+      <div className="w-full flex justify-between items-center px-4 py-2.5 z-10 bg-gradient-to-r from-[#0E2148] via-[#1a3a6b] to-[#0E2148] shadow-lg border-b border-white/10">
+        <div className="Nunito-Extra-Bold flex items-center gap-2.5 text-xl text-white">
+          <div className="w-8 h-8 rounded-md bg-white/10 p-1 flex items-center justify-center backdrop-blur-sm border border-white/20">
+            <img src="/images/paclogo.png" className="w-full h-full object-contain" alt="Logo" />
           </div>
-          <span>QR Code Attendance</span>{" "}
-          <span className="hidden sm:inline-block">System</span>
+          <span className="drop-shadow-sm">QR Code Attendance</span>{" "}
+          <span className="hidden sm:inline-block text-white/90">System</span>
         </div>
 
-        {/* <div
-          className={`${
-            !loggedIn && "hidden"
-          } text-white Nunito-Medium flex gap-4`}
-        >
-          <Link
-            to="/"
-            className={`${page === "home" && "border-b-2 border-[#E3D095]"}`}
-          >
-            Home
-          </Link>
-          <Link
-            to="/students"
-            className={`${
-              page === "students" && "border-b-2 border-[#E3D095]"
-            }`}
-          >
-            Students
-          </Link>
-          <Link
-            to="/attendance-records"
-            className={`${
-              page === "attendance-records" && "border-b-2 border-[#E3D095]"
-            }`}
-          >
-            Attendance Records
-          </Link>
-        </div> */}
-
         <div>
-          <Button variant="secondary" size="sm" onClick={handleLogout}>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={handleLogout}
+            className="bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-sm transition-all duration-200 shadow-sm hover:shadow-md"
+          >
             <span className="hidden sm:inline-block">Logout</span>
             <LogOut size={18} />
           </Button>

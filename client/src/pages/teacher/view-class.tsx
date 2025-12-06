@@ -331,44 +331,54 @@ const ViewClass: React.FC = () => {
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-[90%] sm:w-[80%] space-y-2.5 pb-10">
-        <div className="mt-6 sm:mt-8 flex gap-1 justify-between items-center">
-          <div className="border-l-5 border-orange-600 pl-2 sm:pl-3">
-            {isLoading && "Loading..."}
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+          <div className="border-l-4 border-primary pl-3 sm:pl-4">
+            {isLoading && <span className="text-muted-foreground">Loading...</span>}
             {!isLoading && cls && (
-              <>
-                {cls.className?.trim()} - {cls.department}
-                {cls.year}
-              </>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold Nunito-Bold gradient-text">
+                  {cls.className?.trim()}
+                </h2>
+                <p className="text-muted-foreground Nunito-Medium mt-1 text-sm">
+                  {cls.department}{cls.year}
+                </p>
+              </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm p-2 rounded-lg border shadow-sm">
             <Button
-              variant={mode === "scan" ? "default" : "secondary"}
+              variant={mode === "scan" ? "default" : "outline"}
               size="sm"
               onClick={() => setMode("scan")}
+              className={mode === "scan" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : ""}
             >
-              <QrCode />
+              <QrCode size={18} />
+              <span className="hidden sm:inline ml-1">Scan</span>
             </Button>
             <Button
-              variant={mode === "students" ? "default" : "secondary"}
+              variant={mode === "students" ? "default" : "outline"}
               size="sm"
               onClick={() => setMode("students")}
+              className={mode === "students" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : ""}
             >
-              <Users />
+              <Users size={18} />
+              <span className="hidden sm:inline ml-1">Students</span>
             </Button>
             <Button
-              variant={mode === "attendance" ? "default" : "secondary"}
+              variant={mode === "attendance" ? "default" : "outline"}
               size="sm"
               onClick={() => setMode("attendance")}
+              className={mode === "attendance" ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white" : ""}
             >
-              <CheckSquare />
+              <CheckSquare size={18} />
+              <span className="hidden sm:inline ml-1">Attendance</span>
             </Button>
           </div>
         </div>
         {mode === "scan" && (
-          <Card className="p-4 grid grid-cols-1 sm:[grid-template-columns:1.1fr_1.9fr] shadow-xl">
-            <div className="rounded-md">
-              <h2 className="text-center text-2xl rounded py-1.5 font-bold mb-2">
+          <Card className="p-6 grid grid-cols-1 sm:[grid-template-columns:1.1fr_1.9fr] shadow-2xl border-0 bg-white/95 backdrop-blur-md gap-6">
+            <div className="rounded-xl">
+              <h2 className="text-center text-2xl rounded-lg py-2 font-bold mb-4 Nunito-Bold gradient-text">
                 Scan QR Code
               </h2>
 
@@ -402,7 +412,7 @@ const ViewClass: React.FC = () => {
               )}
 
               <div className="">
-                <div className="mx-1 shadow rounded-md overflow-hidden">
+                <div className="mx-1 shadow-xl rounded-xl overflow-hidden border-2 border-primary/20">
                   {devicesInitialized && (
                     <Scanner
                       key={`scanner-${selectedDeviceId || "default"}`}
@@ -417,7 +427,7 @@ const ViewClass: React.FC = () => {
                       constraints={scannerConstraints}
                       classNames={{
                         video:
-                          "sm:scale-x-[-1] scale-x-100 w-full object-cover",
+                          "sm:scale-x-[-1] scale-x-100 w-full object-cover rounded-lg",
                       }}
                     />
                   )}
@@ -425,8 +435,8 @@ const ViewClass: React.FC = () => {
               </div>
             </div>
 
-            <div className="rainbow flex-1 flex flex-col justify-center items-center order-1 sm:order-2 bg-gray-100 p-6 rounded-md shadow-sm transition hover:shadow-md">
-              <div className="w-56 h-56 bg-white rounded-full overflow-hidden mb-4 shadow-md flex items-center justify-center border-2 border-gray-300">
+            <div className="rainbow flex-1 flex flex-col justify-center items-center order-1 sm:order-2 p-8 rounded-xl">
+              <div className="w-56 h-56 bg-white rounded-full overflow-hidden mb-6 shadow-2xl flex items-center justify-center border-4 border-white/50 ring-4 ring-primary/20">
                 <img
                   src={
                     validatedStudent?.photo
@@ -437,17 +447,22 @@ const ViewClass: React.FC = () => {
                         }${validatedStudent.photo}`
                       : "/images/default-icon.png"
                   }
-                  alt=""
+                  alt="Student"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="text-center">
-                <h4 className="text-xl font-bold mb-1 text-gray-800">
-                  {validatedStudent?.name || "Student Name"}
-                </h4>
-                <div className="border-t-2 border-gray-600 text-gray-700 flex items-center justify-center gap-2 text-[1.5rem] font-bold">
-                  <span>{time.hours}</span>:<span>{time.minutes}</span>:
-                  <span>{time.seconds}</span>
-                  <span>{time.amPm}</span>
+                <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-2 mb-3 inline-block">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white Nunito-Bold drop-shadow-2xl">
+                    {validatedStudent?.name || "Student Name"}
+                  </h4>
+                </div>
+                <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-2 inline-block">
+                  <div className="border-t-2 border-white/50 text-white flex items-center justify-center gap-2 text-2xl sm:text-3xl font-bold Nunito-Bold pt-2 drop-shadow-2xl">
+                    <span>{time.hours}</span>:<span>{time.minutes}</span>:
+                    <span>{time.seconds}</span>
+                    <span className="text-lg sm:text-xl">{time.amPm}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -455,11 +470,11 @@ const ViewClass: React.FC = () => {
         )}
 
         {mode === "students" && (
-          <Card className="p-4 space-y-3">
+          <Card className="p-6 space-y-4 shadow-2xl border-0 bg-white/95 backdrop-blur-md">
             {toggleAdd ? (
               <div className="flex flex-col gap-4">
                 <div className="flex gap-1 justify-between items-end">
-                  <h1 className="text-lg font-bold pb-1 sm:mb-2 sm:leading-0">
+                  <h1 className="text-xl sm:text-2xl font-bold Nunito-Bold gradient-text">
                     Search students
                   </h1>
 
@@ -503,8 +518,8 @@ const ViewClass: React.FC = () => {
                   </Button>
                 </div>
 
-                <div className="max-h-80 overflow-y-auto border rounded p-2">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                <div className="max-h-80 overflow-y-auto border-2 rounded-xl p-3 bg-white/50 backdrop-blur-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {allStudents
                       ?.filter((s) => {
                         const q = search.toLowerCase();
@@ -520,8 +535,10 @@ const ViewClass: React.FC = () => {
                         return (
                           <label
                             key={s.userId}
-                            className={`flex items-center gap-2 p-2 border rounded cursor-pointer ${
-                              checked ? "bg-blue-50" : ""
+                            className={`flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                              checked 
+                                ? "bg-gradient-to-r from-blue-50 to-purple-50 border-primary shadow-md" 
+                                : "bg-white hover:bg-gray-50 border-gray-200"
                             }`}
                           >
                             <input
@@ -536,8 +553,9 @@ const ViewClass: React.FC = () => {
                                       )
                                 );
                               }}
+                              className="w-4 h-4 text-primary"
                             />
-                            <div className="w-8 h-8 border rounded-full overflow-hidden bg-gray-100">
+                            <div className="w-10 h-10 border-2 border-gray-200 rounded-full overflow-hidden bg-gray-100 shadow-sm">
                               <img
                                 src={
                                   s?.photo
@@ -548,13 +566,15 @@ const ViewClass: React.FC = () => {
                                       }${s.photo}`
                                     : "/images/default-icon.png"
                                 }
+                                alt={s.name}
+                                className="w-full h-full object-cover"
                               />
                             </div>
                             <div className="flex-1">
-                              <div className="text-sm font-medium">
+                              <div className="text-sm font-semibold Nunito-SemiBold">
                                 {s.name}
                               </div>
-                              <div className="text-[11px] text-gray-600">
+                              <div className="text-xs text-muted-foreground Nunito-Medium">
                                 {s.departmentAcronym} {s.year}
                               </div>
                             </div>
@@ -566,25 +586,29 @@ const ViewClass: React.FC = () => {
               </div>
             ) : (
               <div className="">
-                <div className="flex gap-1 justify-between border-b">
-                  <h1 className="text-lg font-bold pb-1 mb-2">Students</h1>
+                <div className="flex gap-1 justify-between border-b-2 pb-3 mb-4">
+                  <h1 className="text-xl sm:text-2xl font-bold Nunito-Bold gradient-text">Students</h1>
 
-                  <Button size="sm" onClick={() => setToggleAdd(true)}>
+                  <Button 
+                    size="sm" 
+                    onClick={() => setToggleAdd(true)}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                  >
                     Add Student
                   </Button>
                 </div>
                 {!studentsInClass?.length && (
-                  <p className="pt-3 text-center text-gray-500">
+                  <p className="pt-6 text-center text-muted-foreground Nunito-Medium">
                     No students in this class.
                   </p>
                 )}
-                <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {studentsInClass?.map((s) => (
                     <div
                       key={s.userId}
-                      className="flex items-center gap-3 p-3 border rounded-md"
+                      className="flex items-center gap-3 p-4 border-2 rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-200 card-hover"
                     >
-                      <div className="w-12 h-12 rounded-full border overflow-hidden bg-gray-100">
+                      <div className="w-14 h-14 rounded-full border-2 border-primary/20 overflow-hidden bg-gray-100 shadow-md">
                         <img
                           src={
                             s?.photo
@@ -595,10 +619,12 @@ const ViewClass: React.FC = () => {
                                 }${s.photo}`
                               : "/images/default-icon.png"
                           }
+                          alt={s.name}
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold">{s.name}</div>
+                        <div className="font-semibold Nunito-SemiBold">{s.name}</div>
                       </div>
                       <Button
                         variant="destructive"
@@ -610,6 +636,7 @@ const ViewClass: React.FC = () => {
                             toast.error("Failed to remove student");
                           }
                         }}
+                        className="shadow-md hover:shadow-lg transition-all"
                       >
                         Remove
                       </Button>
@@ -622,26 +649,27 @@ const ViewClass: React.FC = () => {
         )}
 
         {mode === "attendance" && (
-          <Card className="p-4 gap-1">
-            <div className="flex flex-col items-center pb-2 sm:flex-row sm:justify-between gap-2">
-              <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center">
+          <Card className="p-6 gap-4 shadow-2xl border-0 bg-white/95 backdrop-blur-md">
+            <div className="flex flex-col items-center pb-4 sm:flex-row sm:justify-between gap-4 bg-white/60 backdrop-blur-sm p-4 rounded-xl border-2">
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm">Date</label>
+                  <label className="text-sm font-semibold Nunito-SemiBold text-muted-foreground">Date</label>
                   <input
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="border rounded px-2 py-1"
+                    className="border-2 rounded-lg px-3 py-2 focus:border-primary transition-colors Nunito-Medium"
                     disabled={showAllDays}
                   />
                 </div>
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={showAllDays}
                     onChange={(e) => setShowAllDays(e.target.checked)}
+                    className="w-4 h-4 text-primary"
                   />
-                  Show all days
+                  <span className="text-sm font-semibold Nunito-SemiBold">Show all days</span>
                 </label>
               </div>
 

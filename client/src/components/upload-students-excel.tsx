@@ -4,6 +4,7 @@ import { coleAPI } from "@/lib/utils";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
+import { isAxiosError } from "axios";
 
 type Department = {
   departmentId: number;
@@ -58,77 +59,79 @@ const UploadStudentsExcel: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
       let failed = 0;
       const errors: string[] = [];
 
-      // Validate headers presence (Name, Department, Year)
-      const sample = rows[0];
-      const hasHeaders =
-        Object.prototype.hasOwnProperty.call(sample, "Name") &&
-        Object.prototype.hasOwnProperty.call(sample, "Department") &&
-        Object.prototype.hasOwnProperty.call(sample, "Year");
-      if (!hasHeaders) {
-        toast.error(
-          'Invalid template. Expected headers: "Name", "Department", "Year".'
-        );
-        return;
-      }
+      if (file?.name.endsWith(".xlsx")) {
+        const [department, yearVal] = file.name.replace(".xlsx", "").split("-");
 
-      // Process sequentially to avoid overwhelming API
-      for (const [index, row] of rows.entries()) {
-        const name = String(row.Name || "").trim();
-        const deptText = String(row.Department || "").trim();
-        const yearVal = row.Year as number | string;
+        // Process sequentially to avoid overwhelming API
+        for (const [index, row] of rows.entries()) {
+          const name = String(row.Name || "").trim();
 
-        if (!name || !deptText || (!yearVal && yearVal !== 0)) {
-          failed++;
-          errors.push(`Row ${index + 2}: Missing required fields.`);
-          continue;
+          if (!name || !department || !yearVal) {
+            failed++;
+            errors.push(`Row ${index + 2}: Missing required fields.`);
+            continue;
+          }
+
+          const year = Number(yearVal);
+          if (!Number.isFinite(year) || year < 1) {
+            failed++;
+            errors.push(`Row ${index + 2}: Invalid year "${yearVal}".`);
+            continue;
+          }
+
+          // Map department
+          const deptLower = department.toLowerCase();
+          const deptMatch = byAcronym.get(deptLower) || byName.get(deptLower);
+          if (!deptMatch) {
+            failed++;
+            errors.push(
+              `Row ${
+                index + 2
+              }: Unknown department "${department}" (match by acronym or name).`,
+            );
+            continue;
+          }
+
+          try {
+            console.log("cdcd");
+            await coleAPI(
+              "/students/add",
+              "POST",
+            )({
+              studentId: null,
+              name,
+              departmentId: deptMatch.departmentId,
+              year,
+            });
+            success++;
+          } catch (err: unknown) {
+            failed++;
+            const message = isAxiosError(err)
+              ? err.response?.data?.message
+              : String(err);
+            errors.push(`Row ${index + 2}: ${message}`);
+          }
         }
 
-        const year = Number(yearVal);
-        if (!Number.isFinite(year) || year < 1) {
-          failed++;
-          errors.push(`Row ${index + 2}: Invalid year "${yearVal}".`);
-          continue;
+        if (success) {
+          toast.success(`Imported ${success} student(s).`);
         }
-
-        // Map department
-        const deptLower = deptText.toLowerCase();
-        const deptMatch = byAcronym.get(deptLower) || byName.get(deptLower);
-        if (!deptMatch) {
-          failed++;
-          errors.push(
-            `Row ${
-              index + 2
-            }: Unknown department "${deptText}" (match by acronym or name).`
-          );
-          continue;
+        if (failed) {
+          toast.error(`Failed ${failed} row(s). Check template or data.`);
+          if (errors.length) {
+            console.warn("Import errors:", errors.join("\n"));
+          }
         }
-
-        try {
-          await coleAPI(
-            "/students/add",
-            "POST"
-          )({
-            studentId: null,
-            name,
-            departmentId: deptMatch.departmentId,
-            year,
-          });
-          success++;
-        } catch (err: unknown) {
-          failed++;
-          const message = err instanceof Error ? err.message : String(err);
-          errors.push(`Row ${index + 2}: ${message}`);
-        }
-      }
-
-      if (success) {
-        toast.success(`Imported ${success} student(s).`);
-      }
-      if (failed) {
-        toast.error(`Failed ${failed} row(s). Check template or data.`);
-        if (errors.length) {
-          console.warn("Import errors:", errors.join("\n"));
-        }
+      } else {
+        toast("Unable to load this file!", {
+          description: `Please upload a valid excel file!`,
+          duration: 8000,
+          style: {
+            fontSize: "1rem",
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+          },
+        });
       }
 
       onDone?.();

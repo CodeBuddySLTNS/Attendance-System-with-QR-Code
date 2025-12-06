@@ -41,8 +41,11 @@ const App: React.FC = () => {
 
   if (isLoading)
     return (
-      <div className="w-full h-dvh flex justify-center items-center">
-        <Loader size={70} className="animate-spin" />
+      <div className="w-full h-dvh flex justify-center items-center bg-gradient-to-br from-blue-50 via-purple-50/50 to-blue-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader size={70} className="animate-spin text-primary" />
+          <p className="text-muted-foreground Nunito-Medium">Loading...</p>
+        </div>
       </div>
     );
 

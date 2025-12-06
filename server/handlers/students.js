@@ -3,7 +3,12 @@ import { Student } from "../database/models/student.js";
 import { CustomError } from "../lib/utils.js";
 
 const students = async (req, res) => {
-  const result = await Student.getAll();
+  const { departmentId, year } = req.query || {};
+  const result = await Student.getAll({
+    departmentId: parseInt(departmentId),
+    year: parseInt(year),
+  });
+  console.log(result.length);
   res.send(result);
 };
 
@@ -16,7 +21,7 @@ const studentsByDepartment = async (req, res) => {
   const result = await Student.getStudentsByDepartment(
     date,
     departmentId,
-    year
+    year,
   );
   res.send(result);
 };

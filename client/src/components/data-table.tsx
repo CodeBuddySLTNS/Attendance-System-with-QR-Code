@@ -56,6 +56,11 @@ export default function DataTable<T>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
+    },
     state: {
       sorting,
       columnFilters,
@@ -66,23 +71,29 @@ export default function DataTable<T>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-3">
         <Input
           placeholder="Filter names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm h-10 border-2 focus:border-primary transition-colors"
         />
         {toggleColumns && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button
+                variant="outline"
+                className="ml-auto border-2 hover:border-primary transition-colors"
+              >
                 Columns <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent
+              align="end"
+              className="bg-white/95 backdrop-blur-md border-2"
+            >
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -90,7 +101,7 @@ export default function DataTable<T>({
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
-                      className="capitalize"
+                      className="capitalize Nunito-Medium"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
@@ -104,7 +115,7 @@ export default function DataTable<T>({
           </DropdownMenu>
         )}
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-xl border-2 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -154,9 +165,12 @@ export default function DataTable<T>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          Students: {table.getFilteredRowModel().rows.length}
+      <div className="flex items-center justify-end space-x-2 py-4 bg-white/60 backdrop-blur-sm px-4 rounded-b-xl">
+        <div className="flex-1 text-sm text-muted-foreground Nunito-SemiBold">
+          Students:{" "}
+          <span className="text-primary font-bold">
+            {table.getFilteredRowModel().rows.length}
+          </span>
         </div>
         <div className="space-x-2">
           <Button
@@ -164,6 +178,7 @@ export default function DataTable<T>({
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className="border-2 hover:border-primary transition-colors Nunito-SemiBold"
           >
             Previous
           </Button>
@@ -172,6 +187,7 @@ export default function DataTable<T>({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className="border-2 hover:border-primary transition-colors Nunito-SemiBold"
           >
             Next
           </Button>

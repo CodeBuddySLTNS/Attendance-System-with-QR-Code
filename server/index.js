@@ -13,17 +13,14 @@ import classes from "./routes/classes.js";
 
 const app = express();
 const PORT = 5000;
-// const options = {
-//   key: fs.readFileSync(path.join(process.cwd(), "localhost+3-key.pem")),
-//   cert: fs.readFileSync(path.join(process.cwd(), "localhost+3.pem")),
-// };
 
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/templates", express.static(path.join(process.cwd(), "templates")));
+app.use(express.static(path.join(process.cwd(), "..", "client", "dist")));
 app.use((req, res, next) => (console.log(req.path, req.method), next()));
 app.use(authenticate);
-app.use(express.static(path.join(process.cwd(), "..", "client", "dist")));
 
 app.use("/api/auth", auth);
 app.use("/api/students", students);

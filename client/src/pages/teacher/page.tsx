@@ -18,9 +18,12 @@ const TeachersPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className="w-[90%] sm:w-[80%] space-y-2.5">
-        <div className="mt-6 sm:mt-8 flex justify-between">
-          <h1 className="text-2xl Nunito-Bold">My Classes</h1>
+      <div className="w-[90%] sm:w-[80%] space-y-4">
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl Nunito-Bold gradient-text">My Classes</h1>
+            <p className="text-muted-foreground mt-1 Nunito-Medium">Manage your classes and attendance</p>
+          </div>
           <NewClass
             refetch={refetch}
             open={open}
@@ -28,27 +31,40 @@ const TeachersPage: React.FC = () => {
           />
         </div>
         {classes?.length ? (
-          classes.map((cls, index) => (
-            <Card
-              className="p-4 cursor-pointer"
-              key={index}
-              onClick={() => navigate(`/class/${cls.classId}`)}
-            >
-              <div className="flex justify-between">
-                <h2 className="flex gap-2 items-center font-bold">
-                  <CalendarRange />
-                  {cls.className.trim()} - {cls.department + cls.year}
-                </h2>
-                <p className="flex gap-2 items-center text-sm">
-                  <Clock size={16} />
-                  {cls.time.toUpperCase()}
-                </p>
-              </div>
-            </Card>
-          ))
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {classes.map((cls, index) => (
+              <Card
+                className="p-5 cursor-pointer card-hover border-2 hover:border-primary/50 transition-all duration-300 bg-white/95 backdrop-blur-sm"
+                key={index}
+                onClick={() => navigate(`/class/${cls.classId}`)}
+              >
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-2 items-center">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                        <CalendarRange size={20} />
+                      </div>
+                      <h2 className="font-bold Nunito-SemiBold text-lg">
+                        {cls.className.trim()}
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="text-sm Nunito-Medium">{cls.department}{cls.year}</span>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2 border-t">
+                    <Clock size={16} className="text-primary" />
+                    <p className="text-sm font-semibold Nunito-SemiBold text-primary">
+                      {cls.time.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         ) : (
-          <Card className="p-4 mt-4">
-            <p className="text-center text-gray-500">No classes found.</p>
+          <Card className="p-8 mt-4 border-2 border-dashed bg-white/80 backdrop-blur-sm">
+            <p className="text-center text-muted-foreground Nunito-Medium">No classes found. Create your first class to get started.</p>
           </Card>
         )}
       </div>

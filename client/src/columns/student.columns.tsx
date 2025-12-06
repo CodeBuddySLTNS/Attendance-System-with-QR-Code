@@ -8,7 +8,7 @@ import type { Student } from "@/types/students.types";
 export const studentColumns = (
   QrCodeFn: (student: Student) => void,
   editFn: (student: Student) => void,
-  deleteFn: (student: Student) => void
+  deleteFn: (student: Student) => void,
 ): ColumnDef<Student>[] => [
   {
     id: "select",
@@ -52,7 +52,9 @@ export const studentColumns = (
             src={
               row.original?.photo
                 ? `${
-                    config.isProduction ? config.prodServer : config.devServer
+                    config.isProduction
+                      ? config.prodServer
+                      : new URL(config.devServer).origin
                   }${row.original.photo}`
                 : "/images/default-icon.png"
             }
@@ -75,7 +77,7 @@ export const studentColumns = (
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Course
+            Department
             <ArrowUpDown />
           </Button>
         </div>

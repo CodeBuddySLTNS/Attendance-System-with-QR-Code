@@ -70,17 +70,22 @@ const NewClass: React.FC<{
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogTrigger asChild>
-        <Button size="sm">New Class</Button>
+        <Button 
+          size="sm"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          New Class
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="gap-4 shadow-2xl border-2 bg-white/95 backdrop-blur-md">
         <DialogHeader>
-          <DialogTitle>Add new class</DialogTitle>
-          <DialogDescription>Fill out the fields below.</DialogDescription>
+          <DialogTitle className="Nunito-Bold text-2xl text-center gradient-text">Add new class</DialogTitle>
+          <DialogDescription className="text-center Nunito-Medium">Fill out the fields below to create a new class</DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="name">Class Label</Label>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="name" className="Nunito-SemiBold">Class Label</Label>
             <Input
               {...register("className", {
                 required: "Name is required",
@@ -88,14 +93,15 @@ const NewClass: React.FC<{
               id="name"
               type="text"
               placeholder="e.g. SDP101 TTH"
+              className="h-11 border-2 focus:border-primary transition-colors"
             />
             {errors.className && (
-              <p className="text-sm text-red-500">{errors.className.message}</p>
+              <p className="text-sm text-red-500 Nunito-Medium">{errors.className.message}</p>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label>Department</Label>
+          <div className="flex flex-col gap-2">
+            <Label className="Nunito-SemiBold">Department</Label>
             <Controller
               control={control}
               name="departmentId"
@@ -104,14 +110,15 @@ const NewClass: React.FC<{
                   onValueChange={field.onChange}
                   value={field.value?.toString() ?? ""}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 border-2 focus:border-primary">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white/95 backdrop-blur-md border-2">
                     {departments?.map((dep, index) => (
                       <SelectItem
                         key={index}
                         value={dep.departmentId.toString()}
+                        className="Nunito-Medium"
                       >
                         {dep.departmentName}
                       </SelectItem>
@@ -121,14 +128,14 @@ const NewClass: React.FC<{
               )}
             />
             {errors.departmentId && (
-              <p className="text-sm text-red-500">
+              <p className="text-sm text-red-500 Nunito-Medium">
                 {errors.departmentId.message}
               </p>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="year">Year Level</Label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="year" className="Nunito-SemiBold">Year Level</Label>
             <Input
               {...register("year", {
                 required: "Year level is required",
@@ -141,14 +148,15 @@ const NewClass: React.FC<{
               min={1}
               max={4}
               placeholder="Enter year level"
+              className="h-11 border-2 focus:border-primary transition-colors"
             />
             {errors.year && (
-              <p className="text-sm text-red-500">{errors.year.message}</p>
+              <p className="text-sm text-red-500 Nunito-Medium">{errors.year.message}</p>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="time">Time</Label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="time" className="Nunito-SemiBold">Time</Label>
             <Input
               {...register("time", {
                 required: "Time is required",
@@ -156,17 +164,18 @@ const NewClass: React.FC<{
               id="time"
               type="text"
               placeholder="e.g. 08:00 AM - 09:30 AM"
+              className="h-11 border-2 focus:border-primary transition-colors"
             />
             {errors.time && (
-              <p className="text-sm text-red-500">{errors.time.message}</p>
+              <p className="text-sm text-red-500 Nunito-Medium">{errors.time.message}</p>
             )}
           </div>
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full mt-3 Nunito-SemiBold"
+            className="w-full mt-2 h-11 Nunito-SemiBold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
           >
-            Submit
+            {isPending ? "Submitting..." : "Submit"}
           </Button>
         </form>
       </DialogContent>

@@ -1,15 +1,27 @@
 import { sqlQuery } from "../sqlQuery.js";
 
 export const Student = {
-  getAll: async () => {
-    return await sqlQuery(`
-      SELECT 
+  getAll: async ({ departmentId, year }) => {
+    let sql = `
+      SELECT
         u.userId, u.studentId, u.name, d.departmentName, d.acronym AS departmentAcronym, u.year, u.photo
-      FROM users u 
-      JOIN departments d 
+      FROM users u
+      JOIN departments d
         ON u.departmentId = d.departmentId
       WHERE u.role = "student"
-    `);
+   `;
+    let params = [];
+    if (departmentId && departmentId > 0) {
+      sql += ` AND u.departmentId = ?`;
+      params.push(departmentId);
+    }
+    if (year && year > 0) {
+      sql += ` AND u.year = ?`;
+      params.push(year);
+    }
+    sql += ` ORDER BY u.name`;
+    console.log(sql, departmentId, year);
+    return await sqlQuery(sql, params);
   },
 
   add: async (student) => {
@@ -56,7 +68,7 @@ export const Student = {
 
   getStudentsByDepartment: async (date, departmentId, year) => {
     const query = `
-      SELECT 
+      SELECT
         u.userId,
         u.name,
         u.studentId,
@@ -68,9 +80,9 @@ export const Student = {
         a.date
       FROM users u
       JOIN departments d ON u.departmentId = d.departmentId
-      LEFT JOIN attendances a 
+      LEFT JOIN attendances a
         ON u.userId = a.userId AND a.date = ?
-      WHERE 
+      WHERE
         u.departmentId = ?
         AND u.year = ?
         AND u.role = 'student'`;
